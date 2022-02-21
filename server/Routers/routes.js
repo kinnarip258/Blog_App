@@ -17,7 +17,7 @@ const User = require('../models/userSchema');
 //============================= Register =============================
 
 router.post('/signUp', async (req,res) => {
-    console.log("req.body", req.body);
+    
     const {name, email , phone, username, password, cpassword, profilePhoto} = req.body;
 
     try {
@@ -49,14 +49,14 @@ router.post('/signUp', async (req,res) => {
 //============================= Login =============================
 
 router.post('/signIn', async (req,res) => {
-    console.log("req.body", req.body);
+   
     try {
         let token;
 
-        const {email, password } = req.body;
+        const {username, password } = req.body;
 
         //============================= User Exist =============================
-        const userLogin = await User.findOne({ email: email});
+        const userLogin = await User.findOne({ username: username});
 
         if(userLogin){
            //============================= Login User PassWord Matching=============================
@@ -70,7 +70,7 @@ router.post('/signIn', async (req,res) => {
                 token = await userLogin.generateAuthToken();
 
                 //============================= Store Token In Cookie =============================
-                res.cookie("jwt", token , {
+                res.cookie("blog", token , {
                     expires: new Date(Date.now() + 3600000),
 
                 });
@@ -79,17 +79,15 @@ router.post('/signIn', async (req,res) => {
             }
         }
         else{
-            
             //============================= Send Response =============================
             res.status(400).send({ error: "Invalid Username Or Password!"});
         }  
     }
     catch (err) {
         //============================= Send Error Message =============================
-         res.send(err)
+        res.send(err)
     }
 })
-
 
 //========================== Export Module Start ===========================
 

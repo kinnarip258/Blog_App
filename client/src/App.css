@@ -14,6 +14,12 @@
   padding: 45px;
   text-align: center;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  width: 100%;
+}
+textarea {
+  font-size: 30;
+  font-size: 18px;
+  width: 100%;
 }
 .form input {
   font-family: "Roboto", sans-serif;
@@ -24,18 +30,18 @@
   margin: 0 0 15px;
   padding: 15px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 18px;
 }
 .form button {
   font-family: "Roboto", sans-serif;
   text-transform: uppercase;
   outline: 0;
-  background: blue;
+  background: rgb(133, 27, 231);
   width: 100%;
   border: 0;
   padding: 15px;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 18px;
   -webkit-transition: all 0.3 ease;
   transition: all 0.3 ease;
   cursor: pointer;
@@ -43,15 +49,15 @@
 .form button:hover,
 .form button:active,
 .form button:focus {
-  background: #43a047;
+  background: rgb(133, 27, 231);
 }
 .form .message {
   margin: 15px 0 0;
   color: #5c5a5a;
-  font-size: 12px;
+  font-size: 16px;
 }
 .form .message a {
-  color: blue;
+  color: rgb(133, 27, 231);
   text-decoration: none;
 }
 .form .register-form {
@@ -82,7 +88,7 @@
 }
 .container .info span {
   color: #413f3f;
-  font-size: 12px;
+  font-size: 16px;
 }
 .container .info span a {
   color: #000000;
@@ -92,25 +98,39 @@
   color: #ef3b3a;
 }
 body {
-  background: whitesmoke; /* fallback for old browsers */
-  background: -webkit-linear-gradient(right, whitesmoke, whitesmoke);
-  background: -moz-linear-gradient(right, whitesmoke, whitesmoke);
-  background: -o-linear-gradient(right, whitesmoke, whitesmoke);
-  background: linear-gradient(to left, whitesmoke, whitesmoke);
+  background: rgb(215, 191, 238); /* fallback for old browsers */
+  margin: 0 auto;
+  /* background: -webkit-linear-gradient(
+    right,
+    rgb(215, 188, 240),
+    rgb(215, 188, 240)
+  );
+  background: -moz-linear-gradient(
+    right,
+    rgb(215, 188, 240),
+    rgb(215, 188, 240)
+  );
+  background: -o-linear-gradient(right, rgb(215, 188, 240), rgb(215, 188, 240));
+  background: linear-gradient(to left, rgb(215, 188, 240), rgb(215, 188, 240)); */
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .nav_div {
-  height: 30px;
+  height: 50px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  color: blue;
+  box-sizing: border-box;
+  border: 1px solid blueviolet;
+  background-color: rgb(146, 55, 231);
+  font-size: 18px;
 }
 .links {
   padding: 10px;
+  /* color: rgb(146, 55, 231); */
+  color: rgb(255, 255, 255);
 }
 
 .header_div {
@@ -119,5 +139,22 @@ body {
 
 .header_div h1 {
   text-align: center;
-  color: blue;
+  color: rgb(133, 27, 231);
+}
+
+.form select {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.error {
+  color: red;
+  text-align: left;
 }

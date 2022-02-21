@@ -1,19 +1,26 @@
 //========================== Import Modules Start ===========================
 
-import React from "react";
+import React, {useState, useEffect} from "react";
 import {useFormik} from "formik";
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { signUpUser } from "../Actions/actions";
+import { signUpToggle, signUpUser } from "../Actions/actions";
+import {useHistory} from "react-router-dom";
 //========================== Import Modules End =============================
 
 //============================= Register Component Start =============================
 
 const SignUp = () => {
 
+        
+    //============================= Navigate the Page =============================
+    const history = useHistory();
+
     //============================= dispatch Api Request =============================
     const dispatch = useDispatch();
 
+    const registerToggle = useSelector(state => state.registerToggle);
+    console.log("registerToggle",registerToggle);
     //============================= UseFormik =============================
     const formik = useFormik({
         //============================= Initial Values =============================
@@ -48,6 +55,16 @@ const SignUp = () => {
             console.log(values, "values");
         }
     })
+
+    //============================= UseEffect For Navigate to Login =============================
+    useEffect(() => {
+        if(registerToggle === true){
+            //============================= Navigate to Login =============================
+            history.push('/signIn')
+            console.log("registerToggle",registerToggle)
+            dispatch(signUpToggle());
+        }
+    }, [registerToggle])
     return (
         <>
             <div class="login-page">
@@ -80,7 +97,7 @@ const SignUp = () => {
                     {formik.errors.cpassword && formik.touched.cpassword ? (
                         <div className = "error">{formik.errors.cpassword}</div>
                     ) : null}
-                    <button type="submit">create</button>
+                    <button type="submit">Submit</button>
                     </form>
                     <p class="message">Already registered? <a href="/signIn">Sign In</a></p>
                 </div>

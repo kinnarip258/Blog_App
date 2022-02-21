@@ -8,5 +8,6 @@
 
 export const SignIn_User = "SignIn_User";
 export const SignUp_User = "SignUp_User";
+export const SignUp_Toggle = "SignUp_Toggle";
 
 //============================= Export Action Types End =============================

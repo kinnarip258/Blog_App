@@ -31,18 +31,18 @@ const userSchema = new mongoose.Schema({
     },
     profilePhoto: [
         {
-            filename: {
+            photoname: {
                 type: String
             },
-            filepath: {
+            photopath: {
                 type: String
             },
-            filetype: {
+            phototype: {
                 type: String
             },
             public_id: {
                 type: String
-            } ,
+            },
             createAt:{
                 type: Date,
                 default: Date.now()
@@ -56,7 +56,11 @@ const userSchema = new mongoose.Schema({
                 required: true  
             }
         }
-    ]
+    ],
+    createAt:{
+        type: Date,
+        default: Date.now()
+    },
 });
 
 //============================= Hashing Password =============================

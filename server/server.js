@@ -16,7 +16,7 @@ dotenv.config({path: './config.env'});
 require('./database/dbconnection');
 
 //passes the cookie which is realated to user
-// server.use(cookieParser());
+server.use(cookieParser());
 
 //============================= Convert Data to Json data =============================
 server.use(express.json());
