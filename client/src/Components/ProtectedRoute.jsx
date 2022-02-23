@@ -13,7 +13,6 @@ import {Route, Redirect} from 'react-router-dom';
 //...rest: rest of the properties
 const ProtectedRoute = ({authStatus, component: Component, ...rest}) => { 
 
-    console.log("authStatus",authStatus);
     return (
         <>  
             <Route {...rest} render= {(props) => {

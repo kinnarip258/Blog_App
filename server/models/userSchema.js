@@ -49,6 +49,29 @@ const userSchema = new mongoose.Schema({
             }
         }
     ],
+    Articles: [
+        {
+            title: {
+                type: String,
+                required: true
+            },
+            category: {
+                type: String,
+                required: true
+            },
+            tags: {
+                type: String,
+                required: true
+            },
+            description: {
+                type: String,
+                required: true
+            },
+            banner: {
+                type: String,
+            }
+        }
+    ],
     Tokens: [
         {
             token: {

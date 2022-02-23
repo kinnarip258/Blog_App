@@ -28,6 +28,7 @@ const Routes = () => {
         <Switch>
             <Route exact path= '/' component= {Home} />
 
+            <ProtectedRoute exact path = '/EditProfile/:id' component={SignUp} authStatus = {cookie}/>
             <ProtectedRoute exact path= '/blogs' component= {Blogs} authStatus = {cookie}/>
             <ProtectedRoute exact path= '/addArticle' component= {AddArticle} authStatus = {cookie}/>
             <ProtectedRoute exact path= '/profile' component= {Profile} authStatus = {cookie}/>

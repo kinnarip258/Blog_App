@@ -42,10 +42,12 @@ const SignIn = () => {
             </div> 
             <div class="form">
               <form class="login-form" onSubmit={formik.handleSubmit}>
+
               <input {...formik.getFieldProps("username")} value={formik.values.username}  name="username" type="text" placeholder="username"/>
               {formik.errors.username && formik.touched.username ? (
                 <div className = "error">{formik.errors.username}</div>
               ) : null}
+              
               <input {...formik.getFieldProps("password")} value={formik.values.password}  name="password" type="password" placeholder="password"/>
               {formik.errors.password && formik.touched.password ? (
                 <div className = "error">{formik.errors.password}</div>

@@ -4,8 +4,12 @@ import React, {useState, useEffect} from "react";
 import {useFormik} from "formik";
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { signUpToggle, signUpUser } from "../Actions/actions";
+import queryString from "query-string";
+import { signUpToggle, signUpUser, updateProfile, uploadProfilePicture } from "../Actions/actions";
 import {useHistory} from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+toast.configure();
 //========================== Import Modules End =============================
 
 //============================= Register Component Start =============================
@@ -16,16 +20,28 @@ const SignUp = () => {
     //============================= Navigate the Page =============================
     const history = useHistory();
 
+    //============================= Get Edited User Id =============================
+    const {id} = queryString.parse(window.location.search);
+
+    //============================= LoginUser Details =============================
+    const LoginUser = useSelector(state => state.LoginUser)
+  
+    //============================= Store Edite Employee Data =============================
+    const [editedObject,setEditedObject] = useState([]);
+    
     //============================= dispatch Api Request =============================
     const dispatch = useDispatch();
 
-    const registerToggle = useSelector(state => state.registerToggle);
-    console.log("registerToggle",registerToggle);
+    const [profilePhoto, setProfilePhoto] = useState('');
+    console.log("profilePhoto", profilePhoto);
+    
+    const Toggle = useSelector(state => state.Toggle);
+    
     //============================= UseFormik =============================
     const formik = useFormik({
         //============================= Initial Values =============================
         initialValues: {
-            name:"", email:"", phone:"",username:"", password:"" , cpassword:"",  
+            name:"", email:"", phone:"",username:"", password:"" , cpassword:"", img:""
         },
         validationSchema: Yup.object().shape({
             name: Yup.string()
@@ -51,20 +67,59 @@ const SignUp = () => {
               .required('Required'), 
         }),
         onSubmit: (values) => {
-            dispatch(signUpUser(values))
-            console.log(values, "values");
+            
+            if(id){
+                dispatch(updateProfile(id, values, editedObject.email, editedObject.username));
+            }
+            else{
+                if(values.password !== values.cpassword){
+                    toast.warning("Password Not Match")
+                }
+                else{
+                    const formData = new FormData();
+                    formData.append('files', profilePhoto)
+                    console.log("values, formData", values, formData);
+                    dispatch(uploadProfilePicture(formData))
+                    dispatch(signUpUser(values)) 
+                }
+            }
         }
     })
 
-    //============================= UseEffect For Navigate to Login =============================
     useEffect(() => {
-        if(registerToggle === true){
-            //============================= Navigate to Login =============================
-            history.push('/signIn')
-            console.log("registerToggle",registerToggle)
-            dispatch(signUpToggle());
+        if(Toggle === true){
+            if(id) {
+                //============================= Navigate to Login =============================
+                
+                history.push('/profile')
+                dispatch(signUpToggle());
+            }
+            else{
+                //============================= Navigate to profile =============================
+                history.push('/signIn')
+                console.log("Toggle",Toggle)
+                dispatch(signUpToggle());
+            }
         }
-    }, [registerToggle])
+    }, [Toggle])
+
+    //============================= UseEffect For Get EditUser Data =============================
+    useEffect(() => {
+        if(id){
+            //============================= get Edited User Data =============================
+            const editUser = LoginUser
+            setEditedObject(editUser);
+        }
+    },[id]);
+
+    //============================= Set Edited User Data to InitialValues =============================
+    useEffect(() => {
+        if(id && editedObject) {
+            //setvalues
+            formik.setValues(editedObject)
+        }
+    },[editedObject])
+
     return (
         <>
             <div class="login-page">
@@ -73,33 +128,49 @@ const SignUp = () => {
                 </div> 
                 <div class="form">
                     <form class="login-form" onSubmit={formik.handleSubmit}>
+                    
                     <input {...formik.getFieldProps("name")} value={formik.values.name}  name="name"  type="text" placeholder="Name"/>
                     {formik.errors.name && formik.touched.name ? (
                         <div className = "error">{formik.errors.name}</div>
                     ) : null}
+                    
                     <input {...formik.getFieldProps("email")} value={formik.values.email}  name="email"  type="email" placeholder="Email"/>
                     {formik.errors.email && formik.touched.email ? (
                         <div className = "error">{formik.errors.email}</div>
                     ) : null}
+                    
                     <input {...formik.getFieldProps("phone")} value={formik.values.phone}  name="phone"  type="number" placeholder="Phone Number"/>
                     {formik.errors.phone && formik.touched.phone ? (
                         <div className = "error">{formik.errors.phone}</div>
                     ) : null}
+        
                     <input {...formik.getFieldProps("username")} value={formik.values.username}  name="username"  type="text" placeholder="Username"/>
                     {formik.errors.username && formik.touched.username ? (
                         <div className = "error">{formik.errors.username}</div>
                     ) : null}
+                    
                     <input {...formik.getFieldProps("password")} value={formik.values.password}  name="password"  type="password" placeholder="password"/>
                     {formik.errors.password && formik.touched.password ? (
                         <div className = "error">{formik.errors.password}</div>
                     ) : null}
+                    
                     <input {...formik.getFieldProps("cpassword")} value={formik.values.cpassword}  name="cpassword"  type="password" placeholder="Confirm Password"/>
                     {formik.errors.cpassword && formik.touched.cpassword ? (
                         <div className = "error">{formik.errors.cpassword}</div>
                     ) : null}
-                    <button type="submit">Submit</button>
+
+                    <label > Profile Picture </label>
+                    <input name="file" type="file" onChange={(e) => setProfilePhoto(e.target.files)}   />
+                    
+                    <button type="submit">{!id ? "Submit" : "Update"}</button>
                     </form>
-                    <p class="message">Already registered? <a href="/signIn">Sign In</a></p>
+                    {
+                        !id ? (
+                            <>
+                                <p class="message">Already registered? <a href="/signIn">Sign In</a></p>
+                            </>
+                        ) : null
+                    }
                 </div>
             </div>
         </>

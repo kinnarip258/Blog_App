@@ -17,10 +17,15 @@
   width: 100%;
 }
 textarea {
-  font-size: 30;
   font-size: 18px;
   width: 100%;
 }
+
+label {
+  font-size: 18px;
+  margin-right: 300px;
+}
+
 .form input {
   font-family: "Roboto", sans-serif;
   outline: 0;
@@ -51,6 +56,7 @@ textarea {
 .form button:focus {
   background: rgb(133, 27, 231);
 }
+
 .form .message {
   margin: 15px 0 0;
   color: #5c5a5a;
@@ -98,7 +104,8 @@ textarea {
   color: #ef3b3a;
 }
 body {
-  background: rgb(215, 191, 238); /* fallback for old browsers */
+  background: rgb(216, 209, 223);
+
   margin: 0 auto;
   /* background: -webkit-linear-gradient(
     right,
@@ -129,16 +136,15 @@ body {
 }
 .links {
   padding: 10px;
-  /* color: rgb(146, 55, 231); */
   color: rgb(255, 255, 255);
 }
-
 .header_div {
-  text-align: center;
+  position: relative;
 }
 
 .header_div h1 {
   text-align: center;
+  margin-left: 100px;
   color: rgb(133, 27, 231);
 }
 
@@ -157,4 +163,49 @@ body {
 .error {
   color: red;
   text-align: left;
+}
+
+.profile {
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  width: 100%;
+}
+
+.profile p {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 18px;
+}
+
+.profile button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: rgb(133, 27, 231);
+  margin: 15px;
+  width: 25%;
+  border: 0;
+  padding: 15px;
+  color: #ffffff;
+  font-size: 18px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.homeimg {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
 }

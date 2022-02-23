@@ -13,7 +13,7 @@ const Authenticate = async (req,res, next) => {
     try{
         //============================= Get Cookie =============================
 
-        const token = req.cookies.jwt;
+        const token = req.cookies.blog;
 
         //============================= Verify Token =============================
 

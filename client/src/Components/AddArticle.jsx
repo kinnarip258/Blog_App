@@ -1,10 +1,11 @@
 //========================== Import Modules Start ===========================
 
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {useFormik} from "formik";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import {useHistory} from "react-router-dom";
+import { addArticle, addArticleBanner } from "../Actions/actions";
 
 //========================== Import Modules End =============================
 
@@ -15,9 +16,13 @@ const AddArticle = () => {
   //============================= Navigate the Page =============================
   const history = useHistory();
 
+  const Toggle = useSelector(state => state.Toggle);
+
   //============================= dispatch Api Request =============================
   const dispatch = useDispatch();
 
+  const [banner, setBanner] = useState('');
+  console.log("banner", banner);
   //============================= UseFormik =============================
   const formik = useFormik({
     //============================= Initial Values =============================
@@ -40,9 +45,19 @@ const AddArticle = () => {
           .required('Required'), 
       }),
       onSubmit: (values) => {
-          console.log(values, "values");
+        const formData = new FormData();
+        formData.append('image', banner);
+        dispatch(addArticleBanner(formData));
+        dispatch(addArticle(values));
       }
   })
+
+  useEffect(() => {
+    if(Toggle === true){
+      //============================= Navigate to profile =============================
+      history.push('/blogs');
+    }
+}, [Toggle])
 
   return (
     <>
@@ -59,11 +74,11 @@ const AddArticle = () => {
 
                     <select {...formik.getFieldProps("category")} value={formik.values.category} name="category">
                       <option>Select Category...</option>
-                      <option>Food</option>
-                      <option>Fashion</option>
-                      <option>Travel</option>
-                      <option>Business</option>
-                      <option>Personal</option>
+                      <option value={"Food"}>Food</option>
+                      <option value={"Fashion"}>Fashion</option>
+                      <option value={"Travel"}>Travel</option>
+                      <option value={"Business"}>Business</option>
+                      <option value={"Personal"}>Personal</option>
                     </select>
                     {formik.errors.category && formik.touched.category ? (
                         <div className = "error">{formik.errors.category}</div>
@@ -78,7 +93,8 @@ const AddArticle = () => {
                     {formik.errors.description && formik.touched.description ? (
                         <div className = "error">{formik.errors.description}</div>
                     ) : null}
-                    
+
+                    <input name="file" type="file" onChange={(e) => setBanner(e.target.files)}   />
                     
                     <button type="submit">Submit</button>
                     </form>
