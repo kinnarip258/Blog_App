@@ -13,7 +13,10 @@ const Navbar = () => {
 
     const cookie = Cookies.get('blog'); 
 
-    const LoginState = useSelector(state => state.LoginState)
+    const LoginState = useSelector(state => state.LoginState);
+
+    const User = useSelector(state => state.User);
+   
     return (
         <>
             <div className="nav_div" >
@@ -21,22 +24,31 @@ const Navbar = () => {
                 <NavLink to = '/' className='links'> Home </NavLink>
                 
                 {
-                    cookie === undefined && LoginState === true ? (
+                    User.length === 0 && LoginState === true && cookie === undefined && (
                         <>
                             <NavLink to = '/signUp' className='links'> SignUp </NavLink>
-                            <NavLink to = '/signIn' className='links'> SignIn </NavLink> 
+                            <NavLink to = '/signIn' className='links'> SignIn  </NavLink> 
                         </>
-                    ) : null
+                    )
                 }
                 {
-                    cookie !== undefined ? (
+                    cookie !== undefined && (
                         <>
-                            <NavLink to = '/blogs' className='links'> Blogs </NavLink>
-                            <NavLink to = '/profile' className='links'> Profile </NavLink>           
-                            <NavLink to = '/addArticle' className='links'> Add New Article </NavLink>
-                            <NavLink to = '/logout' className='links'> Logout </NavLink>
+                            <div>
+                                <NavLink to = '/blogs' className='links'> Blogs  </NavLink>
+                                <NavLink to = '/myArticles' className='links'>  My Articles </NavLink>
+                                <NavLink to = '/logout' className='links'> Logout </NavLink>
+                            </div>
+
+                            {
+                                User && (
+                                    <>
+                                        <h3>{`Welcome ${User.name} Sign In as ${User.email}`}</h3>
+                                    </>
+                                )
+                            }
                         </>
-                    ) : null
+                    ) 
                 }
                 
                 <hr/>

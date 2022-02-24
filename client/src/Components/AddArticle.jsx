@@ -2,10 +2,11 @@
 
 import React, {useEffect, useState} from "react";
 import {useFormik} from "formik";
+import queryString from "query-string";
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import {useHistory} from "react-router-dom";
-import { addArticle, addArticleBanner } from "../Actions/actions";
+import { addArticle, addArticleBanner, updateArticle } from "../Actions/actions";
 
 //========================== Import Modules End =============================
 
@@ -18,6 +19,14 @@ const AddArticle = () => {
 
   const Toggle = useSelector(state => state.Toggle);
 
+  const User = useSelector(state => state.User)
+
+  //============================= Get Edited User Id =============================
+  const {id} = queryString.parse(window.location.search);
+
+  //============================= Store Edite Employee Data =============================
+  const [editedObject,setEditedObject] = useState([]);
+    
   //============================= dispatch Api Request =============================
   const dispatch = useDispatch();
 
@@ -27,7 +36,7 @@ const AddArticle = () => {
   const formik = useFormik({
     //============================= Initial Values =============================
     initialValues: {
-        title:"", description:"", category:"", tags:""  
+        title:"", description:"", category:"", tags:"",  
     },
     validationSchema: Yup.object().shape({
         title: Yup.string()
@@ -42,23 +51,47 @@ const AddArticle = () => {
         tags: Yup.string()
           .min(3, 'Too Short!')
           .max(300, 'Too Long!')
-          .required('Required'), 
+          .required('Required'),
       }),
+
       onSubmit: (values) => {
-        const formData = new FormData();
-        formData.append('image', banner);
-        dispatch(addArticleBanner(formData));
-        dispatch(addArticle(values));
+        if(id){
+          dispatch(updateArticle(id, values))
+        }
+        else{
+          const formData = new FormData();
+          formData.append('image', banner[0]);
+          dispatch(addArticleBanner(formData));
+          //dispatch(addArticle(values));
+        }
       }
   })
 
   useEffect(() => {
     if(Toggle === true){
       //============================= Navigate to profile =============================
-      history.push('/blogs');
+      history.push('/myArticles');
     }
 }, [Toggle])
+//============================= UseEffect For Get EditUser Data =============================
+useEffect(() => {
+  if(id){
+      //============================= get Edited User Data =============================
+      const editUser = User.Articles.find((ele) => ele._id === id ? ele : null);
+      console.log("editUser",editUser);
+      setEditedObject(editUser);
+  }
+},[id]);
 
+//============================= Set Edited User Data to InitialValues =============================
+useEffect(() => {
+  if(id && editedObject) {
+      //setvalues
+      formik.setValues(editedObject)
+  }
+},[editedObject])
+
+//
   return (
     <>
         <div class="login-page">
@@ -94,9 +127,9 @@ const AddArticle = () => {
                         <div className = "error">{formik.errors.description}</div>
                     ) : null}
 
-                    <input name="file" type="file" onChange={(e) => setBanner(e.target.files)}   />
+                    <input name="files" type="file" onChange={(e) => setBanner(e.target.files)}/>
                     
-                    <button type="submit">Submit</button>
+                    <button type="submit">{!id ? "Submit" : "Update"}</button>
                     </form>
                 </div>
             </div>

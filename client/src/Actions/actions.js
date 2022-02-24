@@ -1,6 +1,6 @@
 //========================== Import Modules Start ===========================
 
-import { SignUp_User , SignIn_User, SignUp_Toggle, User_Profile, Updated_Profile, Logout_User, Delete_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner} from "./actionTypes";
+import { SignUp_User , SignIn_User, SignUp_Toggle, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Delete_Article, Updated_Article, User_Profile, Get_Blogs} from "./actionTypes";
 import Axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -82,7 +82,7 @@ export const signInUser = (values) => {
 //============================= End =============================
 
 
-//============================= User Profile Action Start =============================
+//============================= Edit Profile Action Start =============================
 
 export const userProfile = () => {
 
@@ -91,7 +91,7 @@ export const userProfile = () => {
         .then((res) => {
             dispatch({type: User_Profile, payload: res.data})
         })
-        .catch(err => {
+        .catch((err) => {
             console.log(err);
         })
     }
@@ -99,16 +99,16 @@ export const userProfile = () => {
 
 //============================= End =============================
 
+
 //============================= Edit Profile Action Start =============================
 
-export const updateProfile = (id, values, email, username) => {
+export const updateArticle = (id, values) => {
 
-    console.log("data",id, values, email, username);
     return (dispatch) => {
-        Axios.put(`/updateUserProfile/?ID=${id}&Email=${email}&Username=${username}`, values)
+        Axios.put(`/updateArticle/?ID=${id}`, values)
         .then((res) => {
-            toast.success(`Profile Updated Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
-            dispatch({type: Updated_Profile, payload: res.data})
+            toast.success(`Article Updated Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
+            dispatch({type: Updated_Article})
         })
         .catch(() => {
             toast.error("Email Or Username Already Exist!", { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
@@ -120,13 +120,13 @@ export const updateProfile = (id, values, email, username) => {
 
 //============================= Delete User Action Start =============================
 
-export const deleteUser = (email) => {
+export const deleteArticle = (id) => {
 
     return (dispatch) => {
-        Axios.delete(`/deleteUser/?Email=${email}`)
+        Axios.delete(`/deleteArticle/?ID=${id}`)
         .then(() => {
             toast.success(`Deleted Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
-            dispatch({type: Delete_User})
+            dispatch({type: Delete_Article})
         })
         .catch(err => {
             console.log(err);
@@ -155,16 +155,31 @@ export const addArticle = (article) => {
 
 //============================= End =============================
 
-
 //============================= Add Article Action Start =============================
 
-export const addArticleBanner = (article) => {
+export const addArticleBanner = (articleBanner) => {
 
     return (dispatch) => {
-        Axios.post(`/addArticleBanner`, article)
+        Axios.post(`/addArticleBanner`, articleBanner)
         .then(() => {
-            toast.success(`Article Added Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
             dispatch({type: Add_ArticleBanner});
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+}
+
+//============================= End =============================
+
+//============================= Get Blogs Action Start =============================
+
+export const getBlogs = () => {
+
+    return (dispatch) => {
+        Axios.get(`/getBlogs`)
+        .then((res) => {
+            dispatch({type: Get_Blogs, payload: res.data});
         })
         .catch(err => {
             console.log(err);

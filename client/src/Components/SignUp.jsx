@@ -19,15 +19,6 @@ const SignUp = () => {
         
     //============================= Navigate the Page =============================
     const history = useHistory();
-
-    //============================= Get Edited User Id =============================
-    const {id} = queryString.parse(window.location.search);
-
-    //============================= LoginUser Details =============================
-    const LoginUser = useSelector(state => state.LoginUser)
-  
-    //============================= Store Edite Employee Data =============================
-    const [editedObject,setEditedObject] = useState([]);
     
     //============================= dispatch Api Request =============================
     const dispatch = useDispatch();
@@ -68,57 +59,27 @@ const SignUp = () => {
         }),
         onSubmit: (values) => {
             
-            if(id){
-                dispatch(updateProfile(id, values, editedObject.email, editedObject.username));
+            if(values.password !== values.cpassword){
+                toast.warning("Password Not Match")
             }
             else{
-                if(values.password !== values.cpassword){
-                    toast.warning("Password Not Match")
-                }
-                else{
-                    const formData = new FormData();
-                    formData.append('files', profilePhoto)
-                    console.log("values, formData", values, formData);
-                    dispatch(uploadProfilePicture(formData))
-                    dispatch(signUpUser(values)) 
-                }
+                const formData = new FormData();
+                formData.append('profilePicture', profilePhoto[0])
+                dispatch(uploadProfilePicture(formData))
+                //dispatch(signUpUser(values)) 
             }
         }
     })
 
     useEffect(() => {
-        if(Toggle === true){
-            if(id) {
-                //============================= Navigate to Login =============================
-                
-                history.push('/profile')
-                dispatch(signUpToggle());
-            }
-            else{
-                //============================= Navigate to profile =============================
-                history.push('/signIn')
-                console.log("Toggle",Toggle)
-                dispatch(signUpToggle());
-            }
+        if(Toggle === true){   
+            //============================= Navigate to profile =============================
+            history.push('/signIn')
+            console.log("Toggle",Toggle)
         }
+            
     }, [Toggle])
 
-    //============================= UseEffect For Get EditUser Data =============================
-    useEffect(() => {
-        if(id){
-            //============================= get Edited User Data =============================
-            const editUser = LoginUser
-            setEditedObject(editUser);
-        }
-    },[id]);
-
-    //============================= Set Edited User Data to InitialValues =============================
-    useEffect(() => {
-        if(id && editedObject) {
-            //setvalues
-            formik.setValues(editedObject)
-        }
-    },[editedObject])
 
     return (
         <>
@@ -162,15 +123,11 @@ const SignUp = () => {
                     <label > Profile Picture </label>
                     <input name="file" type="file" onChange={(e) => setProfilePhoto(e.target.files)}   />
                     
-                    <button type="submit">{!id ? "Submit" : "Update"}</button>
+                    <button type="submit">Submit</button>
                     </form>
-                    {
-                        !id ? (
-                            <>
-                                <p class="message">Already registered? <a href="/signIn">Sign In</a></p>
-                            </>
-                        ) : null
-                    }
+                    
+                    <p class="message">Already registered? <a href="/signIn">Sign In</a></p>
+                            
                 </div>
             </div>
         </>

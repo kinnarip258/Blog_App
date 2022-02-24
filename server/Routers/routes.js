@@ -47,9 +47,9 @@ router.post('/signUp', async (req,res) => {
 
 //============================= ProfilePhotot Upload =============================
 
-router.post('/uploadProfilePicture',upload.single('files'), async (req, res) => {
+router.post('/uploadProfilePicture',upload.single('profilePicture'), async (req, res) => {
     try{
-        const photo = req.files;
+        const photo = req.file;
         console.log("photo", photo);
 
         const uploadPhoto = await cloudinary.uploader.upload( photo.path, { resource_type: 'raw'});
@@ -123,51 +123,14 @@ router.get('/userProfile',authenticate, async (req,res) => {
     }
 })
 
-//============================= Edit User Profile =============================
-
-router.put('/updateUserProfile', authenticate, async (req,res) => {
+//============================= Get Blogs =============================
+//authenticate, 
+router.get('/getBlogs', async (req,res) => {
     try{
-        console.log(req.query.Username, req.query.Email);
 
-        if(req.body.username !== req.query.Username || req.body.email !== req.query.Email){
+        const blogs = await User.find();
         
-            const usernameExist = await User.findOne({username: req.body.username});
-            
-            if(usernameExist !== null && usernameExist.username !== req.query.Username){
-                
-                return res.status(400).send({error: "Username already exist!"});
-            }
-            else{
-                
-                const emailExist = await User.findOne({email: req.body.email});
-                
-                if(emailExist !== null && emailExist.email !== req.query.Email){
-                   
-                    return res.status(400).send({error: "Email already exist!"});
-                }
-                else{
-                    
-                    await User.findByIdAndUpdate(req.query.ID , req.body , 
-                        {
-                            new: false
-                        }
-                    );
-                    //============================= Send Response =============================
-                    res.send({msg: "Profile Updated Sucessfully!" })
-                }
-            }
-        }
-        else{
-
-            await User.findByIdAndUpdate(req.query.ID , req.body , 
-                {
-                    new: false
-                }
-            );
-        
-            //============================= Send Response =============================
-            res.send({msg: "Profile Updated Sucessfully!" })
-        }
+        res.send(blogs)
     }
     catch(err){
         //============================= Send Error Message =============================
@@ -175,35 +138,14 @@ router.put('/updateUserProfile', authenticate, async (req,res) => {
     }
 })
 
-
-//============================= Delete User =============================
-
-router.delete('/deleteUser', authenticate, async (req,res) => {
-    
-    try{
-
-        //============================= Clear Cookie =============================
-        res.clearCookie("blog");
-        
-        //============================= Delete Employee =============================
-        await User.findOneAndDelete({email: req.query.Email});
-        //============================= Send Response =============================
-        res.send({msg: "User Deleted Successfully!"})
-        
-    }
-    catch(err) {
-        res.send("error" + err)
-    };
-});
-
 //============================= Add Article =============================
 
-router.post('/addArticle', authenticate, async (req,res) => {
+router.post('/addArticle', authenticate, upload.single('image') , async (req,res) => {
     
     try{
-
-        const {title, description , category, tags } = req.body
-
+        console.log("req.body", req.body);
+        const {title, description , category, tags} = req.body
+        
         const article = {
             title , description , category, tags 
         }
@@ -218,14 +160,27 @@ router.post('/addArticle', authenticate, async (req,res) => {
 });
 
 //============================= Add Article Banner =============================
-
+//
 router.post('/addArticleBanner', authenticate, upload.single('image'), async (req,res) => {
-    
-    try{
-        const photo = req.files;
-        console.log("photo", photo);
 
-        const uploadPhoto = await cloudinary.uploader.upload( photo.path, { resource_type: 'raw'});
+    try{
+        console.log("req.file", req.file);
+        const photo = req.file;
+        
+        const updateQuery = [];
+
+        updateQuery.push(
+            {
+                $match: {
+                    email: req.authenticateUser.email
+                },
+                        
+            }
+        )
+        console.log("req.query.ID", req.query.ID);
+        await User.updateOne({email: req.authenticateUser.email} , { $push: { Articles: article} } )
+
+        const uploadPhoto = await cloudinary.uploader.upload( photo.path, { resource_type: 'auto'});
         console.log(uploadPhoto);
 
         
@@ -236,6 +191,47 @@ router.post('/addArticleBanner', authenticate, upload.single('image'), async (re
     };
 });
 
+
+//============================= Edit Article =============================
+
+router.put('/updateArticle', authenticate, async (req,res) => {
+    try{
+        
+        const updateUser = await User.findOneAndUpdate(
+            { _id: req.query.ID }, req.body
+        )
+        
+        //============================= Send Response =============================
+        res.send({msg: "Profile Updated Sucessfully!" })
+                
+        
+    }
+    catch(err){
+        //============================= Send Error Message =============================
+        res.send(err)
+    }
+})
+
+
+//============================= Delete Article =============================
+
+router.delete('/deleteArticle', authenticate, async (req,res) => {
+    
+    try{
+
+        await User.updateOne(
+            { email: req.authenticateUser.email },
+            { $pull: { Articles: { _id: req.query.ID } } }
+        )
+
+        //============================= Send Response =============================
+        res.send({msg: "User Deleted Successfully!"})
+        
+    }
+    catch(err) {
+        res.send("error" + err)
+    };
+});
 
 //============================= Logout =============================
 

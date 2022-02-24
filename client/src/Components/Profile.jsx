@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom';
-import { deleteUser, userProfile } from '../Actions/actions';
+//import { deleteUser, userProfile } from '../Actions/actions';
 
 const Profile = () => {
 
@@ -11,15 +11,15 @@ const Profile = () => {
   //============================= LoginUser Details =============================
   const LoginUser = useSelector(state => state.LoginUser)
   
-  const handleDelete = (email) => {
-    if(window.confirm("Are You Sure")){
-      dispatch(deleteUser(email));      
-    }
+  // const handleDelete = (email) => {
+  //   if(window.confirm("Are You Sure")){
+  //     dispatch(deleteUser(email));      
+  //   }
     
-  }
-  useEffect(() => {
-    dispatch(userProfile());
-  }, [dispatch]);
+  // }
+  // useEffect(() => {
+  //   dispatch(userProfile());
+  // }, [dispatch]);
 
   return (
     <>
@@ -39,7 +39,7 @@ const Profile = () => {
               )
             }
             <NavLink to={`/EditProfile/:?id=${LoginUser._id}`}><button>Edit</button></NavLink>
-            <button onClick={() => handleDelete(LoginUser.email)}>Delete</button>
+            {/* <button onClick={() => handleDelete(LoginUser.email)}>Delete</button> */}
         </div>
       </div>
     </>
