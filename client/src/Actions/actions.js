@@ -17,8 +17,7 @@ export const signUpUser = (values) => {
     return (dispatch) => {
 
         Axios.post(`/signUp`, values)
-        .then((res) => {
-            toast.success(res.data.msg, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
+        .then(() => {
             dispatch({type: SignUp_User})
         })
         .catch(err => {
@@ -33,13 +32,13 @@ export const signUpUser = (values) => {
 
 //============================= Upload Profile Picture Action Start =============================
 
-export const uploadProfilePicture = (values) => {
-
+export const uploadProfilePicture = (profilePicture, username) => {
+    
     return (dispatch) => {
 
-        Axios.post(`/uploadProfilePicture`, values)
+        Axios.post(`/uploadProfilePicture/?Username=${username}`, profilePicture)
         .then((res) => {
-            toast.success(res.data.msg, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
+            toast.success(`User Register Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
             dispatch({type: Upload_ProfilePicture})
         })
         .catch(err => {
@@ -139,10 +138,10 @@ export const deleteArticle = (id) => {
 
 //============================= Add Article Action Start =============================
 
-export const addArticle = (article) => {
-
+export const addArticle = (article, values) => {
+    console.log(values);
     return (dispatch) => {
-        Axios.post(`/addArticle`, article)
+        Axios.post(`/addArticle/?Title=${values.title}&Categoty=${values.category}&Description=${values.description}&Tags=${values.tags}`, article)
         .then(() => {
             toast.success(`Article Added Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
             dispatch({type: Add_Article})

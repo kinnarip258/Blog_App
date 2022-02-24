@@ -170,7 +170,7 @@ h3 {
   text-align: left;
 }
 
-.profile {
+/* .profile {
   position: relative;
   z-index: 1;
   background: #ffffff;
@@ -180,11 +180,22 @@ h3 {
   text-align: center;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
   width: 100%;
+} */
+.profile {
+  position: relative;
+  z-index: 1;
+  background: #ffffff;
+  /* max-width: 360px; */
+  /* margin: 0 770px 100px; */
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgb(0 0 0 / 20%), 0 5px 5px 0 rgb(0 0 0 / 24%);
+  width: 60%;
+  margin: 0 auto;
 }
-
 .profile p {
   background: #f2f2f2;
-  width: 100%;
+  width: 80%;
   padding: 15px;
   box-sizing: border-box;
   font-size: 18px;
@@ -197,6 +208,7 @@ h3 {
   padding: 10px;
   font-size: 18px;
   font-weight: bold;
+  margin-right: 90%;
 }
 
 .profile button {
@@ -272,4 +284,11 @@ h3 {
 
 .blog_header {
   color: blueviolet;
+}
+.subDiv {
+  width: 50%;
+  display: inline-block;
+}
+.img {
+  height: 400px;
 }

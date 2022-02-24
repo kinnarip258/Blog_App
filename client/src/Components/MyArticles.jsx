@@ -29,14 +29,19 @@ const MyArticles = () => {
                     return(
                         <>
                             <div class="profile">
-                                <label>Title </label>
-                                <p>{article.title}</p>
-                                <label>Category </label>
-                                <p>{article.category}</p>
-                                <label>Tags </label>
-                                <p>{article.tags}</p>
-                                <label>Description </label>
-                                <p>{article.description}</p>
+                                <div className='subDiv'>                               
+                                    <label>Title </label>
+                                    <p>{article.title}</p>
+                                    <label>Category </label>
+                                    <p>{article.category}</p>
+                                    <label>Tags </label>
+                                    <p>{article.tags}</p>
+                                    <label>Description </label>
+                                    <p>{article.description}</p>
+                                </div>
+                                <div className='img'>
+                                    <img src={article.banner} alt='article banner'/>
+                                </div>
                                 <NavLink to = {`/EditArticle/:?id=${article._id}`}><button>Edit</button></NavLink>
                                 <button onClick={() => handleDelete(article._id)}>Delete</button>
                             </div> 

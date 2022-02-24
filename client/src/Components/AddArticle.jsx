@@ -61,8 +61,7 @@ const AddArticle = () => {
         else{
           const formData = new FormData();
           formData.append('image', banner[0]);
-          dispatch(addArticleBanner(formData));
-          //dispatch(addArticle(values));
+          dispatch(addArticle(formData, values));
         }
       }
   })

@@ -30,8 +30,8 @@ router.post('/signUp', async (req,res) => {
         else {
 
             //============================= Save Register User =============================
-            await new User({name, email, phone,username, password, cpassword}).save();
-
+            const registreUser = await new User({name, email, phone,username, password, cpassword}).save();
+            console.log("registreUser",registreUser);
             //============================= Send Email To Register User =============================
             //sendMail({toUser: user.email, user: user});
 
@@ -47,14 +47,14 @@ router.post('/signUp', async (req,res) => {
 
 //============================= ProfilePhotot Upload =============================
 
-router.post('/uploadProfilePicture',upload.single('profilePicture'), async (req, res) => {
+router.post('/uploadProfilePicture', upload.single('profilePicture'), async (req, res) => {
     try{
         const photo = req.file;
-        console.log("photo", photo);
+    
+        const uploadPhoto = await cloudinary.uploader.upload( photo.path, { resource_type: 'auto'});
 
-        const uploadPhoto = await cloudinary.uploader.upload( photo.path, { resource_type: 'raw'});
-        console.log(uploadPhoto);
-
+        await User.updateOne({username: req.query.Username} , { $push: { profilePhoto: uploadPhoto.secure_url} } )
+        
         res.send({msg: "Profile Picture Updated Successfully!"})
     
     }
@@ -143,15 +143,24 @@ router.get('/getBlogs', async (req,res) => {
 router.post('/addArticle', authenticate, upload.single('image') , async (req,res) => {
     
     try{
-        console.log("req.body", req.body);
-        const {title, description , category, tags} = req.body
-        
+        const title = req.query.Title;
+        const description = req.query.Description;
+        const category = req.query.Categoty;
+        const tags = req.query.Tags;
+        const photo = req.file;
+        console.log("req.query", title , description,category, tags);
+        const uploadPhoto = await cloudinary.uploader.upload( photo.path, { resource_type: 'auto'});
+        console.log(uploadPhoto);
+
         const article = {
-            title , description , category, tags 
+            title: title,
+            description: description ,
+            category: category, 
+            tags: tags , 
+            banner: uploadPhoto.secure_url
         }
-    
-        await User.updateOne({email: req.authenticateUser.email} , { $push: { Articles: article} } )
-    
+        const newarticle = await User.updateOne({email: req.authenticateUser.email} , { $push: { Articles: article} } )
+        console.log("newarticle", newarticle);
         res.send({msg: 'Article Added successfully!'})
     }
     catch(err) {
@@ -160,10 +169,11 @@ router.post('/addArticle', authenticate, upload.single('image') , async (req,res
 });
 
 //============================= Add Article Banner =============================
-//
+
 router.post('/addArticleBanner', authenticate, upload.single('image'), async (req,res) => {
 
     try{
+        console.log("req.query.ID", req.query.ID);
         console.log("req.file", req.file);
         const photo = req.file;
         
@@ -174,11 +184,11 @@ router.post('/addArticleBanner', authenticate, upload.single('image'), async (re
                 $match: {
                     email: req.authenticateUser.email
                 },
-                        
+                
             }
         )
-        console.log("req.query.ID", req.query.ID);
-        await User.updateOne({email: req.authenticateUser.email} , { $push: { Articles: article} } )
+        
+        await User.updateOne({email: req.authenticateUser.email} , { $push: { Articles: req.file} } )
 
         const uploadPhoto = await cloudinary.uploader.upload( photo.path, { resource_type: 'auto'});
         console.log(uploadPhoto);

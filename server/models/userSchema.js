@@ -31,22 +31,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePhoto: [
         {
-            photoname: {
-                type: String
-            },
-            photopath: {
-                type: String
-            },
-            phototype: {
-                type: String
-            },
-            public_id: {
-                type: String
-            },
-            createAt:{
-                type: Date,
-                default: Date.now()
-            }
+            type: String,
         }
     ],
     Articles: [

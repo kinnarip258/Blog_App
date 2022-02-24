@@ -24,7 +24,6 @@ const SignUp = () => {
     const dispatch = useDispatch();
 
     const [profilePhoto, setProfilePhoto] = useState('');
-    console.log("profilePhoto", profilePhoto);
     
     const Toggle = useSelector(state => state.Toggle);
     
@@ -65,8 +64,8 @@ const SignUp = () => {
             else{
                 const formData = new FormData();
                 formData.append('profilePicture', profilePhoto[0])
-                dispatch(uploadProfilePicture(formData))
-                //dispatch(signUpUser(values)) 
+                dispatch(signUpUser(values)) 
+                dispatch(uploadProfilePicture(formData, values.username))
             }
         }
     })
@@ -74,11 +73,11 @@ const SignUp = () => {
     useEffect(() => {
         if(Toggle === true){   
             //============================= Navigate to profile =============================
-            history.push('/signIn')
-            console.log("Toggle",Toggle)
+            history.push('/signIn');
+            dispatch(signUpToggle());
+            formik.handleReset();
         }
-            
-    }, [Toggle])
+    }, [Toggle, dispatch])
 
 
     return (

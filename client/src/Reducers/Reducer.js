@@ -13,13 +13,14 @@ const Reducer = (state = initialState, action) => {
 
             return{
                 ...state,
-                Toggle: true
+                
             }
 
         case Upload_ProfilePicture:
 
             return{
-                ...state
+                ...state,
+                Toggle: true
             }
 
         case SignUp_Toggle: 
