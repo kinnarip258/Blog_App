@@ -194,7 +194,7 @@ export const likeArticle = (articleId, userId, username) => {
 
     return (dispatch) => {
         Axios.post(`/likeArticle/?ID=${articleId}`, {userId, username})
-        .then((res) => {
+        .then(() => {
             dispatch({type: Like_Article});
         })
         .catch(err => {

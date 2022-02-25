@@ -248,51 +248,44 @@ router.delete('/deleteArticle', authenticate, async (req,res) => {
 router.post('/likeArticle', authenticate, async (req,res) => {
     
     try{
-        console.log("req.body", req.body);
+    
         const {userId, username} = req.body;
         const articleId = req.query.ID;
-        console.log("req.query.ID", req.query.ID);
-        console.log("userId", userId);
-        console.log("username ", username );
+        
         const alreadyLikeByOtheres = await Like.findOne({articleId: articleId});
-        console.log("alreadyLike", alreadyLikeByOtheres );
+        console.log("alreadyLikeByOtheres", alreadyLikeByOtheres);
 
         if(alreadyLikeByOtheres !== null) {
-            const alreadyLike = alreadyLikeByOtheres.Users.find((user) => {
-                user.userId === userId ? user : null
-            })
-            console.log("alreadyLike", alreadyLike);
-            if(alreadyLike !== null){
-                console.log("alreadyLike");
+            const alreadyLike = alreadyLikeByOtheres.Users.find((user) => user.userId === userId ? user : null)
+            
+            if(alreadyLike !== undefined){
+            
                 res.send({msg: 'You Already Like The Article'});
             }
             else{
-                console.log("not alreadyLike");
                 const user = {
                     userId: userId,
                     username: username
                 }
     
-                const create = await new Like({articleId}).save();
-                console.log("create", create);
-                const likeUser = await Like.updateOne({articleId: articleId},{ $push: { Users: user} } )
-                console.log("likeUser", likeUser);
+                await Like.updateOne({articleId: articleId},{ $push: { Users: user} } )
+                
                 res.send({msg: "Like The Article"});
     
             }
             
         }
         else{
-            console.log("not alreadyLike");
+            
             const user = {
                 userId: userId,
                 username: username
             }
 
-            const create = await new Like({articleId}).save();
-            console.log("create", create);
-            const likeUser = await Like.updateOne({articleId: articleId},{ $push: { Users: user} } )
-            console.log("likeUser", likeUser);
+            await new Like({articleId}).save();
+            
+            await Like.updateOne({articleId: articleId},{ $push: { Users: user} } )
+            
             res.send({msg: "Like The Article"});
 
         }
@@ -322,7 +315,6 @@ router.get('/likeArticle', authenticate, async (req,res) => {
 router.post('/commentArticle', authenticate, async (req,res) => {
     
     try{
-        
         const {userId, username, comment} = req.body;
         const articleId = req.query.ID;
        
@@ -333,7 +325,7 @@ router.post('/commentArticle', authenticate, async (req,res) => {
         };
 
         const alreadyCommentByOtheres = await Comment.findOne({articleId: articleId});
-        console.log("alreadyCommentByOtheres", alreadyCommentByOtheres );
+    
 
         if(alreadyCommentByOtheres !== null){
 
@@ -342,7 +334,7 @@ router.post('/commentArticle', authenticate, async (req,res) => {
             res.send({msg: "Comment The Article"});
         }
         else {
-            
+
             await new Comment({articleId}).save();
             await Comment.updateOne({articleId: articleId}, {$push: { Users: user}});
 
@@ -380,7 +372,7 @@ router.get('/getBlogs', authenticate, async (req,res) => {
 
         if(SearchValue === ""){
             const blogs = await User.find();
-        
+            
             res.send(blogs);
         }
 
@@ -389,11 +381,11 @@ router.get('/getBlogs', authenticate, async (req,res) => {
                 {
                     $match: {
                         $or: [
-                            {title: RegExp("^" + SearchValue, 'i')},
-                            {category: RegExp("^" + SearchValue, 'i')},
-                            {tags: RegExp("^" + SearchValue, 'i')},
+                            {"Articles.title": RegExp("^" + SearchValue, 'i')},
+                            {"Articles.category": RegExp("^" + SearchValue, 'i')},
+                            {"Articles.tags": RegExp("^" + SearchValue, 'i')},
                         ]   
-                    }
+                    },
                 },    
             );
     
@@ -405,7 +397,8 @@ router.get('/getBlogs', authenticate, async (req,res) => {
         }
     }
     catch(err) {
-        res.send("error" + err)
+        console.log(err);
+        
     };
 });
 

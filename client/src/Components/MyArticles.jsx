@@ -29,6 +29,10 @@ const MyArticles = () => {
         <div className="header_div">
             <h1>My Articles</h1>
         </div>
+
+        <div className='Add_Article'>
+            <NavLink to='/addArticle'><button> Add Article </button></NavLink>
+        </div>
         <div className='main_div'>
             {
                 User &&  User.Articles && User.Articles.map((article) => {                 

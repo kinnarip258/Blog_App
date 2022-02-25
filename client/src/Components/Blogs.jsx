@@ -1,7 +1,6 @@
 //========================== Import Modules Start ===========================
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
 import { commentArticle, getBlogs, getCommentArticles, getLikeArticles, likeArticle } from '../Actions/actions';
 import debounce from "lodash.debounce";
 //========================== Import Modules End =============================
@@ -14,39 +13,43 @@ const Blogs = () => {
   const Blogs = useSelector(state => state.Blogs);
   const Like = useSelector(state => state.Like);
   const Comment = useSelector(state => state.Comment);
- 
+  const Toggle = useSelector(state => state.Toggle);
+  const User = useSelector(state => state.User);
+  
+
+  const userId = User._id;
+  const username = User.username;
+  console.log();
   const [search, setSearch] = useState("");
   const [comment, setComment] = useState("");
-  
+  const [showLikedUser, setShowLikedUser] = useState("Likes")
   const handleSearch = (e) => {
     setSearch(e.target.value)
   }
-  const handleLike = (articleId, userId, username) => {
+  const handleLike = (articleId) => {
+    console.log(articleId, userId, username);
     dispatch(likeArticle(articleId, userId, username));
   }
 
-  const handleComment = (articleId, userId, username) => {
+  const handleComment = (articleId) => {
     dispatch(commentArticle(comment, articleId, userId, username));
-    setComment("");
   }
   //============================= Optimise Search Employee =============================
   const optimiseVersion = debounce(handleSearch, [500])
 
   useEffect(() => {
+    setComment("");
     dispatch(getBlogs(search));
     dispatch(getLikeArticles());
     dispatch(getCommentArticles());
-  }, [dispatch, search]);
+  }, [dispatch, search, Toggle]);
   
   return (
     <>
       <div className="header_div">
         <h1> Blogs </h1>
       </div>
-      <div className='Add_Article'>
-        <NavLink to='/addArticle'><button> Add Article </button></NavLink>
-      </div>
-
+      
       <div className='search'>
         <input name='search' placeholder='Search Blogs...' onKeyUp={optimiseVersion}/>
       </div>
@@ -83,8 +86,10 @@ const Blogs = () => {
                                     
                                     
                                   <div className='comment'>
-                                    <input  placeholder='Write Comments...' onChange={(e) => setComment(e.target.value)}/>
-                                    <button onClick={() => handleComment(article._id, blog._id, blog.username)}>Add Comment</button>
+                                    <input  
+                                    placeholder='Write Comments...' 
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}/>
                                    </div>
                                    {
                                       Like && Like.map((ele) => {
@@ -92,15 +97,41 @@ const Blogs = () => {
                                           <>
                                             {
                                               ele.articleId === article._id ? 
-                                                <h4>{`${ele.Users.length} Likes`}</h4>
+                                                (
+                                                  <>
+                                                    {showLikedUser === "Likes" ? (
+                                                      <div className='likes'>
+                                                        <h2 onClick={() => setShowLikedUser("users")}>{`${ele.Users.length} Likes`}</h2>
+                                                      </div>
+                                                    ) : null}
+                                                  </>
+                                                )
+                                              : null
+                                            }
+                                            {
+                                              ele.articleId === article._id ? 
+                                                (
+                                                  ele.Users.map(user => {
+                                                    return (
+                                                      <>
+                                                        {showLikedUser === "users" ? (
+                                                          <div className='likesUser'>
+                                                            <h4 onClick={() => setShowLikedUser("Likes")}>{`${user.username}`}</h4>
+                                                          </div>
+                                                        ) : null}
+                                                        <h4></h4>
+                                                      </>
+                                                    )
+                                                  })
+                                                )
                                               : null
                                             }
                                           </>
                                         )
                                       })
                                     }
-                                    <button onClick={() => handleLike(article._id, blog._id, blog.username)}>Like</button>
-                                    <button>Comment</button>
+                                    <button onClick={() => handleLike(article._id)}>Like</button>
+                                    <button onClick={() => handleComment(article._id)}>Comment</button>
                                 
                                     {
                                       Comment && Comment.map((ele) => {

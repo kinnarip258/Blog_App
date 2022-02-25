@@ -86,14 +86,15 @@ const Reducer = (state = initialState, action) => {
             
             return {
                 ...state,
-                Blogs: action.payload
+                Blogs: action.payload,
+                Toggle: false,
             }
         
         case Like_Article: 
 
             return {
                 ...state,
-
+                Toggle: true,
             }
 
         case Get_LikeArticle:
@@ -107,6 +108,7 @@ const Reducer = (state = initialState, action) => {
 
             return {
                 ...state,
+                Toggle: true,
             }
 
         case Get_CommentArticle:
