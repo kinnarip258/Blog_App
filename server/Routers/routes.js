@@ -9,8 +9,9 @@ const authenticate = require('../middleware/authenticate');
 const sendMail = require('../mail/nodemailer');
 const upload = require('../fileupload/multer');
 const cloudinary = require('../fileupload/cloudinary');
-const path = require('path');
 const User = require('../models/userSchema');
+const Like = require('../models/likeSchema');
+const Comment = require('../models/commentSchema');
 //========================== Load Modules End =============================
 
 //============================= Register =============================
@@ -30,8 +31,8 @@ router.post('/signUp', async (req,res) => {
         else {
 
             //============================= Save Register User =============================
-            const registreUser = await new User({name, email, phone,username, password, cpassword}).save();
-            console.log("registreUser",registreUser);
+            await new User({name, email, phone,username, password, cpassword}).save();
+            
             //============================= Send Email To Register User =============================
             //sendMail({toUser: user.email, user: user});
 
@@ -123,44 +124,24 @@ router.get('/userProfile',authenticate, async (req,res) => {
     }
 })
 
-//============================= Get Blogs =============================
-//authenticate, 
-router.get('/getBlogs', async (req,res) => {
-    try{
-
-        const blogs = await User.find();
-        
-        res.send(blogs)
-    }
-    catch(err){
-        //============================= Send Error Message =============================
-        res.send(err)
-    }
-})
-
 //============================= Add Article =============================
 
-router.post('/addArticle', authenticate, upload.single('image') , async (req,res) => {
+router.post('/addArticle', authenticate, async (req,res) => {
     
     try{
-        const title = req.query.Title;
-        const description = req.query.Description;
-        const category = req.query.Categoty;
-        const tags = req.query.Tags;
-        const photo = req.file;
-        console.log("req.query", title , description,category, tags);
-        const uploadPhoto = await cloudinary.uploader.upload( photo.path, { resource_type: 'auto'});
-        console.log(uploadPhoto);
 
+        const {title, description, category, tags} = req.body.values;
+        const banner = req.body.Banner;
         const article = {
-            title: title,
-            description: description ,
+            title: title, 
+            description: description, 
             category: category, 
-            tags: tags , 
-            banner: uploadPhoto.secure_url
+            tags: tags,
+            banner: banner
         }
-        const newarticle = await User.updateOne({email: req.authenticateUser.email} , { $push: { Articles: article} } )
-        console.log("newarticle", newarticle);
+
+        await User.updateOne({email: req.authenticateUser.email} , { $push: { Articles: article} } )
+        
         res.send({msg: 'Article Added successfully!'})
     }
     catch(err) {
@@ -173,47 +154,66 @@ router.post('/addArticle', authenticate, upload.single('image') , async (req,res
 router.post('/addArticleBanner', authenticate, upload.single('image'), async (req,res) => {
 
     try{
-        console.log("req.query.ID", req.query.ID);
-        console.log("req.file", req.file);
+        
         const photo = req.file;
-        
-        const updateQuery = [];
-
-        updateQuery.push(
-            {
-                $match: {
-                    email: req.authenticateUser.email
-                },
                 
-            }
-        )
-        
-        await User.updateOne({email: req.authenticateUser.email} , { $push: { Articles: req.file} } )
-
         const uploadPhoto = await cloudinary.uploader.upload( photo.path, { resource_type: 'auto'});
-        console.log(uploadPhoto);
+       
+        const banner = uploadPhoto.secure_url;
 
-        
-        res.send({msg: "Article Banner Updated Successfully!"})
+        res.send(banner);
     }
     catch(err) {
         res.send(err)
     };
 });
 
-
 //============================= Edit Article =============================
 
 router.put('/updateArticle', authenticate, async (req,res) => {
     try{
+       console.log("req.body", req.body);
+        const {_id, title, description, category, tags, banner} = req.body.values;
+        const ArticleBanner = req.body.Banner;
         
-        const updateUser = await User.findOneAndUpdate(
-            { _id: req.query.ID }, req.body
-        )
+        if(ArticleBanner.length === undefined){
+            console.log("if");
+            const article = {
+                _id: _id,
+                title: title, 
+                description: description, 
+                category: category, 
+                tags: tags,
+                banner: banner
+            }
+            
+            await User.findOneAndUpdate(
+                { "Articles._id": req.query.ID }, {$set: {"Articles.$": article}}
+            );
+           
+            //============================= Send Response =============================
+            res.send({msg: "Profile Updated Sucessfully!" })
+        }
+        else{
+            console.log("else");
+            const article = {
+                _id: _id,
+                title: title, 
+                description: description, 
+                category: category, 
+                tags: tags,
+                banner: ArticleBanner
+            }
         
-        //============================= Send Response =============================
-        res.send({msg: "Profile Updated Sucessfully!" })
-                
+            await User.findOneAndUpdate(
+                { "Articles._id": req.query.ID }, {$set: {"Articles.$": article}}
+            );
+           
+            //============================= Send Response =============================
+            res.send({msg: "Profile Updated Sucessfully!" })
+        }
+        
+
         
     }
     catch(err){
@@ -233,10 +233,176 @@ router.delete('/deleteArticle', authenticate, async (req,res) => {
             { email: req.authenticateUser.email },
             { $pull: { Articles: { _id: req.query.ID } } }
         )
-
+        
         //============================= Send Response =============================
         res.send({msg: "User Deleted Successfully!"})
         
+    }
+    catch(err) {
+        res.send("error" + err)
+    };
+});
+
+//============================= Like Article =============================
+
+router.post('/likeArticle', authenticate, async (req,res) => {
+    
+    try{
+        console.log("req.body", req.body);
+        const {userId, username} = req.body;
+        const articleId = req.query.ID;
+        console.log("req.query.ID", req.query.ID);
+        console.log("userId", userId);
+        console.log("username ", username );
+        const alreadyLikeByOtheres = await Like.findOne({articleId: articleId});
+        console.log("alreadyLike", alreadyLikeByOtheres );
+
+        if(alreadyLikeByOtheres !== null) {
+            const alreadyLike = alreadyLikeByOtheres.Users.find((user) => {
+                user.userId === userId ? user : null
+            })
+            console.log("alreadyLike", alreadyLike);
+            if(alreadyLike !== null){
+                console.log("alreadyLike");
+                res.send({msg: 'You Already Like The Article'});
+            }
+            else{
+                console.log("not alreadyLike");
+                const user = {
+                    userId: userId,
+                    username: username
+                }
+    
+                const create = await new Like({articleId}).save();
+                console.log("create", create);
+                const likeUser = await Like.updateOne({articleId: articleId},{ $push: { Users: user} } )
+                console.log("likeUser", likeUser);
+                res.send({msg: "Like The Article"});
+    
+            }
+            
+        }
+        else{
+            console.log("not alreadyLike");
+            const user = {
+                userId: userId,
+                username: username
+            }
+
+            const create = await new Like({articleId}).save();
+            console.log("create", create);
+            const likeUser = await Like.updateOne({articleId: articleId},{ $push: { Users: user} } )
+            console.log("likeUser", likeUser);
+            res.send({msg: "Like The Article"});
+
+        }
+        
+    }
+    catch(err) {
+        res.send("error" + err)
+    };
+});
+
+//============================= Get Like Article =============================
+
+router.get('/likeArticle', authenticate, async (req,res) => {
+    
+    try{
+
+        const likes = await Like.find();
+        res.send(likes);
+    }
+    catch(err) {
+        res.send("error" + err)
+    };
+});
+
+//============================= Comment Article =============================
+
+router.post('/commentArticle', authenticate, async (req,res) => {
+    
+    try{
+        
+        const {userId, username, comment} = req.body;
+        const articleId = req.query.ID;
+       
+        const user = {
+            userId: userId,
+            username: username,
+            comment: comment
+        };
+
+        const alreadyCommentByOtheres = await Comment.findOne({articleId: articleId});
+        console.log("alreadyCommentByOtheres", alreadyCommentByOtheres );
+
+        if(alreadyCommentByOtheres !== null){
+
+            await Comment.updateOne({articleId: articleId}, {$push: { Users: user}});
+
+            res.send({msg: "Comment The Article"});
+        }
+        else {
+            
+            await new Comment({articleId}).save();
+            await Comment.updateOne({articleId: articleId}, {$push: { Users: user}});
+
+            res.send({msg: "Comment The Article"});
+        }
+        
+    }
+    catch(err) {
+        res.send("error" + err)
+    };
+});
+
+//============================= Get Comment Article =============================
+
+router.get('/commentArticle', authenticate, async (req,res) => {
+    
+    try{
+
+        const comments = await Comment.find();
+        res.send(comments);
+    }
+    catch(err) {
+        res.send("error" + err)
+    };
+});
+
+//============================= Get search Article =============================
+
+router.get('/getBlogs', authenticate, async (req,res) => {
+    
+    try{
+        const SearchValue = req.query.Search;
+
+        let aggregateQuery = [];
+
+        if(SearchValue === ""){
+            const blogs = await User.find();
+        
+            res.send(blogs);
+        }
+
+        else{
+            aggregateQuery.push(  
+                {
+                    $match: {
+                        $or: [
+                            {title: RegExp("^" + SearchValue, 'i')},
+                            {category: RegExp("^" + SearchValue, 'i')},
+                            {tags: RegExp("^" + SearchValue, 'i')},
+                        ]   
+                    }
+                },    
+            );
+    
+            //============================= Apply AggreagteQuery In User Collection =============================
+            const matchUser = await User.aggregate([aggregateQuery]);
+            console.log("matchUser", matchUser);
+            //============================= Send Response =============================
+            res.send(matchUser); 
+        }
     }
     catch(err) {
         res.send("error" + err)

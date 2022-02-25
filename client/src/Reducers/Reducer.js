@@ -1,10 +1,17 @@
-import { SignIn_User, SignUp_User, SignUp_Toggle, User_Profile, Updated_Profile,Logout_User, Delete_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Updated_Article, Delete_Article, Get_Blogs } from "../Actions/actionTypes";
+//========================== Import Modules Start ===========================
+
+import { SignIn_User, SignUp_User, SignUp_Toggle, User_Profile, Updated_Profile,Logout_User, Delete_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Updated_Article, Delete_Article, Get_Blogs, Loading, Like_Article, Get_LikeArticle, Comment_Article, Get_CommentArticle } from "../Actions/actionTypes";
+
+//========================== Import Modules End =============================
 
 const initialState = { 
     LoginState : true,
     User : [],
     Toggle: false,
-    Blogs: []
+    Blogs: [],
+    Banner: [],
+    Like: [],
+    Comment: []
 }
 
 const Reducer = (state = initialState, action) => {
@@ -49,7 +56,8 @@ const Reducer = (state = initialState, action) => {
 
             return{
                 ...state,
-                Toggle: true
+                Toggle: true,
+                Banner: []
             }
 
         case Delete_Article: 
@@ -63,30 +71,61 @@ const Reducer = (state = initialState, action) => {
 
             return {
                 ...state,
-                Toggle: true
+                Toggle: true,
+                Banner: []
             }
 
         case Add_ArticleBanner:
             
             return {
                 ...state,
+                Banner: action.payload
             }
          
         case Get_Blogs:
-            console.log("action.payload", action.payload);
+            
             return {
                 ...state,
                 Blogs: action.payload
             }
+        
+        case Like_Article: 
+
+            return {
+                ...state,
+
+            }
+
+        case Get_LikeArticle:
+
+            return {
+                ...state,
+                Like: action.payload
+            }
+        
+        case Comment_Article: 
+
+            return {
+                ...state,
+            }
+
+        case Get_CommentArticle:
+
+            return {
+                ...state,
+                Comment: action.payload
+            }
+
         case Logout_User :
 
             return{
                 ...state,
                 User : [],
                 LoginState: true,
-                Blogs: []
+                Blogs: [],
+                Banner: []
             }
-            
+           
         default: 
             return state
     }

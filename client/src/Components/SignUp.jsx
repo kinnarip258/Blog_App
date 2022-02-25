@@ -4,8 +4,7 @@ import React, {useState, useEffect} from "react";
 import {useFormik} from "formik";
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import queryString from "query-string";
-import { signUpToggle, signUpUser, updateProfile, uploadProfilePicture } from "../Actions/actions";
+import { loading, signUpToggle, signUpUser, updateProfile, uploadProfilePicture } from "../Actions/actions";
 import {useHistory} from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -63,7 +62,7 @@ const SignUp = () => {
             }
             else{
                 const formData = new FormData();
-                formData.append('profilePicture', profilePhoto[0])
+                formData.append('profilePicture', profilePhoto[0]);
                 dispatch(signUpUser(values)) 
                 dispatch(uploadProfilePicture(formData, values.username))
             }
@@ -85,7 +84,8 @@ const SignUp = () => {
             <div class="login-page">
                 <div className="header_div">
                     <h1>Registration Form</h1>
-                </div> 
+                </div>
+                
                 <div class="form">
                     <form class="login-form" onSubmit={formik.handleSubmit}>
                     
@@ -123,6 +123,8 @@ const SignUp = () => {
                     <input name="file" type="file" onChange={(e) => setProfilePhoto(e.target.files)}   />
                     
                     <button type="submit">Submit</button>
+                    
+                    
                     </form>
                     
                     <p class="message">Already registered? <a href="/signIn">Sign In</a></p>

@@ -185,13 +185,12 @@ h3 {
   position: relative;
   z-index: 1;
   background: #ffffff;
-  /* max-width: 360px; */
-  /* margin: 0 770px 100px; */
   padding: 45px;
   text-align: center;
   box-shadow: 0 0 20px 0 rgb(0 0 0 / 20%), 0 5px 5px 0 rgb(0 0 0 / 24%);
   width: 60%;
   margin: 0 auto;
+  margin-bottom: 30px;
 }
 .profile p {
   background: #f2f2f2;
@@ -242,29 +241,31 @@ h3 {
   position: relative;
   z-index: 1;
   background: #ffffff;
-  max-width: 360px;
-  margin: 0 780px 50px;
   padding: 45px;
   text-align: center;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-  width: 100%;
+  box-shadow: 0 0 20px 0 rgb(0 0 0 / 20%), 0 5px 5px 0 rgb(0 0 0 / 24%);
+  width: 60%;
+  margin: 0 auto;
+  margin-bottom: 30px;
 }
 
-.blog_details p {
+.blog p {
   background: #f2f2f2;
-  width: 100%;
+  width: 60%;
   padding: 15px;
   box-sizing: border-box;
   font-size: 18px;
   text-align: left;
 }
 
-.blog_details label {
+.blog label {
   font-family: "Roboto", sans-serif;
   text-align: left;
   padding: 10px;
   font-size: 18px;
   font-weight: bold;
+  margin-right: 90%;
+  display: flex;
 }
 .blog button {
   font-family: "Roboto", sans-serif;
@@ -281,7 +282,22 @@ h3 {
   transition: all 0.3 ease;
   cursor: pointer;
 }
+.comment {
+  margin-top: 0px;
+}
 
+.comment input {
+  padding: 5px;
+  width: 300px;
+  margin: 5px;
+  font-size: 18px;
+}
+
+.comment button {
+  padding: 5px;
+  width: 170px;
+  margin: 5px;
+}
 .blog_header {
   color: blueviolet;
 }
@@ -289,6 +305,54 @@ h3 {
   width: 50%;
   display: inline-block;
 }
-.img {
+.subDiv p {
+  background: #f2f2f2;
+  width: 80%;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 18px;
+  text-align: left;
+}
+.banner {
   height: 400px;
+  width: -webkit-fill-available;
+  display: contents;
+}
+
+img {
+  height: 400px;
+  width: 400px;
+}
+
+.blog h4 {
+  text-align: left;
+  margin-left: 150px;
+  display: flex;
+  margin-top: -35px;
+}
+
+.search {
+  margin: -23px 10px 20px;
+}
+
+.search input {
+  padding: 5px;
+  width: 300px;
+  margin: 5px;
+  font-size: 18px;
+}
+
+.showcomment {
+  text-align: left;
+}
+
+.showcomment h2 {
+  font-size: 16px;
+  text-align: left;
+}
+
+.showcomment p {
+  font-size: 12px;
+  width: 100%;
+  background: #f2f2f2;
 }

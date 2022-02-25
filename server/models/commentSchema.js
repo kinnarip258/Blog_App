@@ -3,42 +3,40 @@
 //========================== Load internal Module =========================
 
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 //========================== Load Modules End =============================
 
 
 //============================= Model Schema Of Blog =============================
 
-const articleSchema = new mongoose.Schema({
-    title: {
+const commentSchema = new mongoose.Schema({
+    articleId: {
         type: String,
-        required: true
     },
-    category: {
-        type: String,
-        required: true
-    },
-    tags: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    banner: {
-        type: String,
-    }
+    Users: [
+        {
+            userId: {
+                type: String,
+
+            },
+            username: {
+                type: String, 
+
+            },
+            comment: {
+                type: String,
+
+            }
+        }
+    ]
 })
 
 
 //============================= User Model =============================
-const Blog = mongoose.model('Article', articleSchema);
+const Comment = mongoose.model('Comment', commentSchema);
 
 //========================== Export Module Start ===========================
 
-module.exports = Blog;
+module.exports = Comment;
 
 //========================== Export module end ==================================

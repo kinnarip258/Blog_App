@@ -6,7 +6,7 @@ import queryString from "query-string";
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import {useHistory} from "react-router-dom";
-import { addArticle, addArticleBanner, updateArticle } from "../Actions/actions";
+import { addArticle, addArticleBanner, loading, updateArticle } from "../Actions/actions";
 
 //========================== Import Modules End =============================
 
@@ -19,6 +19,8 @@ const AddArticle = () => {
 
   const Toggle = useSelector(state => state.Toggle);
 
+  const Banner = useSelector(state => state.Banner);
+
   const User = useSelector(state => state.User)
 
   //============================= Get Edited User Id =============================
@@ -26,12 +28,14 @@ const AddArticle = () => {
 
   //============================= Store Edite Employee Data =============================
   const [editedObject,setEditedObject] = useState([]);
-    
+  
   //============================= dispatch Api Request =============================
   const dispatch = useDispatch();
 
   const [banner, setBanner] = useState('');
-  console.log("banner", banner);
+  
+  const [article, setArticle] = useState('');
+
   //============================= UseFormik =============================
   const formik = useFormik({
     //============================= Initial Values =============================
@@ -55,48 +59,64 @@ const AddArticle = () => {
       }),
 
       onSubmit: (values) => {
-        if(id){
-          dispatch(updateArticle(id, values))
+        if(id){ 
+          const formData = new FormData();
+          formData.append('image', banner[0]);
+          dispatch(addArticleBanner(formData)) 
+          setArticle(values) 
         }
         else{
           const formData = new FormData();
           formData.append('image', banner[0]);
-          dispatch(addArticle(formData, values));
+          dispatch(addArticleBanner(formData))
+          setArticle(values)
         }
       }
-  })
+  });
+
+  useEffect(() => {
+    if(Banner.length !== 0 && !id){
+      dispatch(addArticle(article, Banner));
+      setArticle('')
+    }
+    else if (Banner.length !== 0 && id){
+      dispatch(updateArticle(id, article, Banner));
+      setArticle('')
+    }
+  }, [Banner]);
 
   useEffect(() => {
     if(Toggle === true){
       //============================= Navigate to profile =============================
       history.push('/myArticles');
     }
-}, [Toggle])
-//============================= UseEffect For Get EditUser Data =============================
-useEffect(() => {
-  if(id){
-      //============================= get Edited User Data =============================
-      const editUser = User.Articles.find((ele) => ele._id === id ? ele : null);
-      console.log("editUser",editUser);
-      setEditedObject(editUser);
-  }
-},[id]);
+  }, [Toggle, dispatch]);
 
-//============================= Set Edited User Data to InitialValues =============================
-useEffect(() => {
-  if(id && editedObject) {
-      //setvalues
-      formik.setValues(editedObject)
-  }
-},[editedObject])
+  //============================= UseEffect For Get EditUser Data =============================
+  useEffect(() => {
+    if(id){
+        //============================= get Edited User Data =============================
+        const editUser = User.Articles.find((ele) => ele._id === id ? ele : null);
+        console.log("editUser",editUser);
+        setEditedObject(editUser);
+    }
+  },[id]);
 
-//
+  //============================= Set Edited User Data to InitialValues =============================
+  useEffect(() => {
+    if(id && editedObject) {
+        //setvalues
+        formik.setValues(editedObject)
+    }
+  },[editedObject]);
+
   return (
     <>
         <div class="login-page">
                 <div className="header_div">
                     <h1>Add Article </h1>
                 </div> 
+                
                 <div class="form">
                     <form class="login-form" onSubmit={formik.handleSubmit}>
                     <input {...formik.getFieldProps("title")} value={formik.values.title}  name="title"  type="text" placeholder="Title"/>
@@ -126,9 +146,14 @@ useEffect(() => {
                         <div className = "error">{formik.errors.description}</div>
                     ) : null}
 
+                    {
+                      id ? <img src={editedObject.banner} alt ="article Banner"/> : null
+                    }
+
                     <input name="files" type="file" onChange={(e) => setBanner(e.target.files)}/>
                     
                     <button type="submit">{!id ? "Submit" : "Update"}</button>
+                    
                     </form>
                 </div>
             </div>
@@ -136,7 +161,7 @@ useEffect(() => {
   )
 }
 
-//============================= register Component End =============================
+//============================= Add Article Component End =============================
 
 //============================= Export Default Start =============================
 
