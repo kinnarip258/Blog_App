@@ -8,11 +8,13 @@ const Logout = () => {
   //============================= dispatch Api Request =============================
   const dispatch = useDispatch();
 
+  //============================= Redux State =============================
   const LoginState = useSelector(state => state.LoginState);
 
   //============================= Navigate the Page =============================
   const history = useHistory();
 
+  //============================= UseEffect For Toggle =============================
   useEffect(() => {
     if(LoginState === true){
         history.push('/'); 
@@ -20,6 +22,7 @@ const Logout = () => {
 }, [LoginState])
 
 
+  //============================= UseEffect For Logout Dispatch =============================
   useEffect(() => {
     dispatch(logout())
   }, [dispatch]);

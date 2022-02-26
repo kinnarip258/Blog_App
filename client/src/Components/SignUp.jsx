@@ -22,8 +22,10 @@ const SignUp = () => {
     //============================= dispatch Api Request =============================
     const dispatch = useDispatch();
 
+    //============================= useState =============================
     const [profilePhoto, setProfilePhoto] = useState('');
     
+    //============================= Redux States =============================
     const Toggle = useSelector(state => state.Toggle);
     
     //============================= UseFormik =============================

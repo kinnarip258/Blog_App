@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 //========================== Load Modules End =============================
 
 
-//============================= Model Schema Of Blog =============================
+//============================= Model Schema Of Like =============================
 
 const likeSchema = new mongoose.Schema({
     articleId: {
@@ -28,7 +28,7 @@ const likeSchema = new mongoose.Schema({
 })
 
 
-//============================= User Model =============================
+//============================= Like Model =============================
 const Like = mongoose.model('Like', likeSchema);
 
 //========================== Export Module Start ===========================

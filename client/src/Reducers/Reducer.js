@@ -11,7 +11,8 @@ const initialState = {
     Blogs: [],
     Banner: [],
     Like: [],
-    Comment: []
+    Comment: [],
+    MyArticles:[]
 }
 
 const Reducer = (state = initialState, action) => {
@@ -48,7 +49,8 @@ const Reducer = (state = initialState, action) => {
 
             return{
                 ...state,
-                User: action.payload,
+                User: action.payload.LoginUser,
+                MyArticles: action.payload.MyArticles,
                 Toggle: false
             }
         case Get_Blogs:

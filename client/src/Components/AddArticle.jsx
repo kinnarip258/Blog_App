@@ -17,6 +17,7 @@ const AddArticle = () => {
   //============================= Navigate the Page =============================
   const history = useHistory();
 
+  //============================= Redux States =============================
   const Toggle = useSelector(state => state.Toggle);
 
   const Banner = useSelector(state => state.Banner);
@@ -32,6 +33,7 @@ const AddArticle = () => {
   //============================= dispatch Api Request =============================
   const dispatch = useDispatch();
 
+  //============================= UseState =============================
   const [banner, setBanner] = useState('');
   
   const [article, setArticle] = useState('');
@@ -74,6 +76,7 @@ const AddArticle = () => {
       }
   });
 
+  //============================= Data Dispatch UseEffect =============================
   useEffect(() => {
     if(Banner.length !== 0 && !id){
       dispatch(addArticle(article, Banner));
@@ -85,6 +88,7 @@ const AddArticle = () => {
     }
   }, [Banner]);
 
+  //============================= toggle UseEffect =============================
   useEffect(() => {
     if(Toggle === true){
       //============================= Navigate to profile =============================

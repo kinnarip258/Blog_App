@@ -6,7 +6,6 @@ import SignIn from '../Components/SignIn';
 import SignUp from '../Components/SignUp';
 import Blogs from '../Components/Blogs';
 import Logout from '../Components/Logout';
-import Profile from '../Components/Profile';
 import Home from '../Components/Home';
 import AddArticle from "../Components/AddArticle";
 import ProtectedRoute from '../Components/ProtectedRoute';

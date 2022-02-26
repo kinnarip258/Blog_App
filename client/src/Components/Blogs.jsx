@@ -8,39 +8,46 @@ import debounce from "lodash.debounce";
 //============================= All Blogs Component Start =============================
 const Blogs = () => {
 
+  //============================= dispatch Api Request =============================
   const dispatch = useDispatch();
 
+  //============================= Redux States =============================
   const Blogs = useSelector(state => state.Blogs);
   const Like = useSelector(state => state.Like);
   const Comment = useSelector(state => state.Comment);
   const Toggle = useSelector(state => state.Toggle);
   const User = useSelector(state => state.User);
- console.log("Like",Like); 
- console.log("Comment",Comment); 
 
+  //============================= Get User Id and Username =============================
   const userId = User._id;
   const username = User.username;
   
-  console.log("Blogs", Blogs);
+  //============================= UseStates =============================
   const [search, setSearch] = useState("");
   const [comment, setComment] = useState("");
   const [showLikedUser, setShowLikedUser] = useState("Likes");
+
+  //============================= Handle Search =============================
   const handleSearch = (e) => {
     setSearch(e.target.value)
+
   }
+
+  //============================= Handle Like =============================
   const handleLike = (ArticlesId) => {
     console.log(ArticlesId, userId, username);
     dispatch(likeArticle(ArticlesId, userId, username));
   }
 
+  //============================= Handle Comment =============================
   const handleComment = (ArticlesId) => {
     dispatch(commentArticle(comment, ArticlesId, userId, username));
   }
   //============================= Optimise Search Employee =============================
   const optimiseVersion = debounce(handleSearch, [500])
 
+  //============================= useEffect For Get Blogs, Likes, Comments =============================
   useEffect(() => {
-    setComment("");
     dispatch(getBlogs(search));
     dispatch(getLikeArticles());
     dispatch(getCommentArticles());
@@ -84,8 +91,7 @@ const Blogs = () => {
                                     
                                   <div className='comment'>
                                     <input  
-                                    placeholder='Write Comments...' 
-                                    value={comment}
+                                    placeholder='Write Comments...'
                                     onChange={(e) => setComment(e.target.value)}/>
                                    </div>
                                    {
@@ -100,7 +106,8 @@ const Blogs = () => {
                                                       <div className='likes'>
                                                         <h2 onClick={() => setShowLikedUser("users")}>{`${ele.Users.length} Likes`}</h2>
                                                       </div>
-                                                    ) : null}
+                                                    ) :null
+                                                    }
                                                   </>
                                                 )
                                               : null
@@ -113,7 +120,7 @@ const Blogs = () => {
                                                       <>
                                                         {showLikedUser === "users" ? (
                                                           <div className='likesUser'>
-                                                            <h4 onClick={() => setShowLikedUser("Likes")}>{`${user.username}`}</h4>
+                                                            <h2 onClick={() => setShowLikedUser("Likes")}>{`${user.username}`}</h2>
                                                           </div>
                                                         ) : null}
                                                         <h4></h4>
@@ -127,6 +134,34 @@ const Blogs = () => {
                                         )
                                       })
                                     }
+
+                                    {/* {
+                                      Like && Like.map((ele) => {
+                                        return (
+                                        <>
+                                          {
+                                            blog.Articles._id === ele.articleId ? 
+                                              (
+                                                ele.Users.map(user => {
+                                                  return (
+                                                    <>
+                                                    {
+                                                      user.userId === userId ? 
+                                                        <button onClick={() => handleLike(blog.Articles._id)}>UnLike</button>
+                                                      : null
+                                                    }
+                                                    </>
+                                                  )
+                                                })
+                                              )
+                                            : null
+                                            }
+                                          </>
+                                        )
+                                      })                   
+                                    } */}
+                                     
+
                                     <button onClick={() => handleLike(blog.Articles._id)}>Like</button>
                                     <button onClick={() => handleComment(blog.Articles._id)}>Comment</button>
                                 

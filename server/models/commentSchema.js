@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 //========================== Load Modules End =============================
 
 
-//============================= Model Schema Of Blog =============================
+//============================= Model Schema Of Comment =============================
 
 const commentSchema = new mongoose.Schema({
     articleId: {
@@ -32,7 +32,7 @@ const commentSchema = new mongoose.Schema({
 })
 
 
-//============================= User Model =============================
+//============================= Comment Model =============================
 const Comment = mongoose.model('Comment', commentSchema);
 
 //========================== Export Module Start ===========================

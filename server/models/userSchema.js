@@ -57,7 +57,7 @@ const userSchema = new mongoose.Schema({
             },
             createAt:{
                 type: Date,
-                default: Date.now()
+                default: Date.now
             },
         }
     ],
@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema({
     ],
     createAt:{
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
 });
 

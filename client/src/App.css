@@ -104,21 +104,21 @@ label {
   color: #ef3b3a;
 }
 body {
-  background: rgb(216, 209, 223);
+  background: rgb(201, 181, 221);
 
   margin: 0 auto;
   /* background: -webkit-linear-gradient(
     right,
-    rgb(215, 188, 240),
-    rgb(215, 188, 240)
+    rgb(216, 209, 223),
+    rgb(120, 94, 144)
   );
   background: -moz-linear-gradient(
     right,
-    rgb(215, 188, 240),
-    rgb(215, 188, 240)
+    rgb(216, 209, 223),
+    rgb(120, 94, 144)
   );
-  background: -o-linear-gradient(right, rgb(215, 188, 240), rgb(215, 188, 240));
-  background: linear-gradient(to left, rgb(215, 188, 240), rgb(215, 188, 240)); */
+  background: -o-linear-gradient(right, rgb(120, 94, 144), rgb(216, 209, 223));
+  background: linear-gradient(to left, rgb(120, 94, 144), rgb(216, 209, 223)); */
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -255,6 +255,7 @@ body {
   font-family: "Roboto", sans-serif;
   text-transform: uppercase;
   outline: 0;
+  margin-top: -25px;
   background: rgb(133, 27, 231);
   margin: 15px;
   width: 33%;
@@ -293,12 +294,13 @@ body {
   display: inline-block;
 }
 .subDiv p {
+  display: flex;
   background: #f2f2f2;
-  width: 80%;
-  padding: 15px;
   box-sizing: border-box;
   font-size: 18px;
   text-align: left;
+  width: 80%;
+  padding: 15px;
 }
 .banner {
   height: 400px;
@@ -355,14 +357,17 @@ img {
 .likes {
   text-align: left;
   margin-top: -62px;
+  margin-bottom: 60px;
 }
 
 .likes h2 {
   text-align: left;
   margin-top: 10px;
+  height: 50px;
   margin-left: 340px;
   color: blueviolet;
   cursor: pointer;
+  margin-bottom: 60px;
 }
 
 .likes button {
@@ -385,14 +390,15 @@ img {
   margin-bottom: 30px;
 } */
 
-.likesUser h4 {
+.likesUser h2 {
   position: relative;
   z-index: 1;
-  background: rgb(224, 220, 220);
+  /* background: rgb(224, 220, 220); */
+  justify-content: center;
   padding: 45px;
-  text-align: center;
   box-shadow: 0 0 20px 0 rgb(0 0 0 / 20%), 0 5px 5px 0 rgb(0 0 0 / 24%);
   width: 60%;
+  height: 10px;
   margin: 0 auto;
   margin-bottom: 30px;
 }
@@ -408,4 +414,9 @@ img {
   padding-left: 1020px;
   color: white;
   font-size: 20px;
+  margin-top: 10px;
+}
+
+.ArticalLikes {
+  
 }

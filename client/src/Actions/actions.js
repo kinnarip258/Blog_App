@@ -81,7 +81,7 @@ export const signInUser = (values) => {
 //============================= End =============================
 
 
-//============================= Edit Profile Action Start =============================
+//============================= Get LoginUser Data Action Start =============================
 
 export const userProfile = () => {
 
@@ -135,7 +135,7 @@ export const addArticle = (values,Banner) => {
 
 //============================= End =============================
 
-//============================= Add Article Action Start =============================
+//============================= Add Article Banner Action Start =============================
 
 export const addArticleBanner = (articleBanner) => {
 
@@ -153,7 +153,7 @@ export const addArticleBanner = (articleBanner) => {
 //============================= End =============================
 
 
-//============================= Edit Profile Action Start =============================
+//============================= Update Article Action Start =============================
 
 export const updateArticle = (id, values, Banner) => {
 
@@ -171,7 +171,7 @@ export const updateArticle = (id, values, Banner) => {
 
 //============================= End =============================
 
-//============================= Delete User Action Start =============================
+//============================= Delete Article Action Start =============================
 
 export const deleteArticle = (id) => {
 

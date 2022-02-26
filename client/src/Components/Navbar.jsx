@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const Navbar = () => {
 
+    //============================= Redux States =============================
     const cookie = Cookies.get('blog'); 
 
     const LoginState = useSelector(state => state.LoginState);
