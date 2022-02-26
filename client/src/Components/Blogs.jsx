@@ -15,24 +15,26 @@ const Blogs = () => {
   const Comment = useSelector(state => state.Comment);
   const Toggle = useSelector(state => state.Toggle);
   const User = useSelector(state => state.User);
-  
+ console.log("Like",Like); 
+ console.log("Comment",Comment); 
 
   const userId = User._id;
   const username = User.username;
-  console.log();
+  
+  console.log("Blogs", Blogs);
   const [search, setSearch] = useState("");
   const [comment, setComment] = useState("");
-  const [showLikedUser, setShowLikedUser] = useState("Likes")
+  const [showLikedUser, setShowLikedUser] = useState("Likes");
   const handleSearch = (e) => {
     setSearch(e.target.value)
   }
-  const handleLike = (articleId) => {
-    console.log(articleId, userId, username);
-    dispatch(likeArticle(articleId, userId, username));
+  const handleLike = (ArticlesId) => {
+    console.log(ArticlesId, userId, username);
+    dispatch(likeArticle(ArticlesId, userId, username));
   }
 
-  const handleComment = (articleId) => {
-    dispatch(commentArticle(comment, articleId, userId, username));
+  const handleComment = (ArticlesId) => {
+    dispatch(commentArticle(comment, ArticlesId, userId, username));
   }
   //============================= Optimise Search Employee =============================
   const optimiseVersion = debounce(handleSearch, [500])
@@ -57,31 +59,26 @@ const Blogs = () => {
         {
           Blogs && Blogs.map(blog => {
                 return (
-                  <>
-                    
-                    {
-                      blog.Articles && blog.Articles.map((article) => {
-                        return(
-                          <>
-                          <div class="blog" key={blog._id}>
+                  <> 
+                    <div class="blog" key={blog._id}>
                             <div className='blog_header'>
                               <h2>Author : {blog.username}</h2>
                             </div>
                             {
-                              article.lengtht === 0 ? null : (
+                              blog.Articles && (
                                 <>
                                     <div className='subDiv'>
                                       <label>Title </label>
-                                      <p>{article.title}</p>
+                                      <p>{blog.Articles.title}</p>
                                       <label>Category </label>
-                                      <p>{article.category}</p>
+                                      <p>{blog.Articles.category}</p>
                                       <label>Tags </label>
-                                      <p>{article.tags}</p>
+                                      <p>{blog.Articles.tags}</p>
                                       <label>Description </label>
-                                      <p>{article.description}</p>
+                                      <p>{blog.Articles.description}</p>
                                     </div>
                                     <div className='banner'>
-                                      <img src={article.banner} alt='article banner'/>
+                                      <img src={blog.Articles.banner} alt='Articles banner'/>
                                     </div>
                                     
                                     
@@ -96,7 +93,7 @@ const Blogs = () => {
                                         return (
                                           <>
                                             {
-                                              ele.articleId === article._id ? 
+                                              blog.Articles._id === ele.articleId ?
                                                 (
                                                   <>
                                                     {showLikedUser === "Likes" ? (
@@ -109,7 +106,7 @@ const Blogs = () => {
                                               : null
                                             }
                                             {
-                                              ele.articleId === article._id ? 
+                                              blog.Articles._id === ele.articleId ? 
                                                 (
                                                   ele.Users.map(user => {
                                                     return (
@@ -130,15 +127,15 @@ const Blogs = () => {
                                         )
                                       })
                                     }
-                                    <button onClick={() => handleLike(article._id)}>Like</button>
-                                    <button onClick={() => handleComment(article._id)}>Comment</button>
+                                    <button onClick={() => handleLike(blog.Articles._id)}>Like</button>
+                                    <button onClick={() => handleComment(blog.Articles._id)}>Comment</button>
                                 
                                     {
                                       Comment && Comment.map((ele) => {
                                         return (
                                           <>
                                             {
-                                              ele.articleId === article._id ? 
+                                              blog.Articles._id === ele.articleId ? 
                                                 (
                                                   <>
                                                     <h2 style={{ margin: 0 , textAlign: "left" }}>Comments</h2>
@@ -165,17 +162,11 @@ const Blogs = () => {
                                 </>
                               )
                             }
-                          </div>
-                          </>
-                        )
-                      })
-                    }
-                      
-                    
+                    </div>  
                   </>
                 )
               })
-        }
+        } 
       </div>
     </>
   )

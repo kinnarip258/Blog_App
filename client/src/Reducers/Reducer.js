@@ -51,7 +51,29 @@ const Reducer = (state = initialState, action) => {
                 User: action.payload,
                 Toggle: false
             }
+        case Get_Blogs:
+            
+            return {
+                ...state,
+                Blogs: action.payload,
+                Toggle: false,
+            }
 
+        case Add_Article: 
+
+        return {
+            ...state,
+            Toggle: true,
+            Banner: []
+        }
+
+        case Add_ArticleBanner:
+            
+            return {
+                ...state,
+                Banner: action.payload
+            }
+         
         case Updated_Article:
 
             return{
@@ -67,29 +89,6 @@ const Reducer = (state = initialState, action) => {
                 Toggle: true 
             }
 
-        case Add_Article: 
-
-            return {
-                ...state,
-                Toggle: true,
-                Banner: []
-            }
-
-        case Add_ArticleBanner:
-            
-            return {
-                ...state,
-                Banner: action.payload
-            }
-         
-        case Get_Blogs:
-            
-            return {
-                ...state,
-                Blogs: action.payload,
-                Toggle: false,
-            }
-        
         case Like_Article: 
 
             return {
@@ -122,10 +121,13 @@ const Reducer = (state = initialState, action) => {
 
             return{
                 ...state,
+                LoginState : true,
                 User : [],
-                LoginState: true,
+                Toggle: false,
                 Blogs: [],
-                Banner: []
+                Banner: [],
+                Like: [],
+                Comment: []
             }
            
         default: 

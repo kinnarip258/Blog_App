@@ -122,7 +122,64 @@ router.get('/userProfile',authenticate, async (req,res) => {
         //============================= Send Error Message =============================
         res.send(err)
     }
-})
+});
+
+
+//============================= Get search Article =============================
+
+router.get('/getBlogs',authenticate, async (req,res) => {
+    
+    try{
+        console.log("req.body", req.body);
+        const SearchValue = req.query.Search;
+
+        let aggregateQuery = [];
+
+        if(SearchValue === ""){
+            aggregateQuery.push(
+                {
+                    $unwind : "$Articles",
+                }, 
+                {
+                    $sort: { "Articles.createAt": -1}
+                }
+            )
+            const blogs = await User.aggregate([aggregateQuery]);
+            
+            res.send(blogs);
+        }
+
+        else{
+            aggregateQuery.push(  
+                {
+                    $unwind : "$Articles",
+                }, 
+                {
+                    $match: {
+                        $or: [
+                            {"Articles.title": new RegExp("^" + SearchValue, 'i')},
+                            {"Articles.category": new RegExp("^" + SearchValue, 'i')},
+                            {"Articles.tags": new RegExp("^" + SearchValue, 'i')},
+                        ]   
+                    },
+                },
+                {
+                    $sort: { "Articles.createAt": -1}
+                }   
+            );
+    
+            //============================= Apply AggreagteQuery In User Collection =============================
+            const matchUser = await User.aggregate([aggregateQuery]);
+            
+            //============================= Send Response =============================
+            res.send(matchUser); 
+        }
+    }
+    catch(err) {
+        console.log(err);
+        
+    };
+});
 
 //============================= Add Article =============================
 
@@ -253,8 +310,7 @@ router.post('/likeArticle', authenticate, async (req,res) => {
         const articleId = req.query.ID;
         
         const alreadyLikeByOtheres = await Like.findOne({articleId: articleId});
-        console.log("alreadyLikeByOtheres", alreadyLikeByOtheres);
-
+    
         if(alreadyLikeByOtheres !== null) {
             const alreadyLike = alreadyLikeByOtheres.Users.find((user) => user.userId === userId ? user : null)
             
@@ -325,7 +381,6 @@ router.post('/commentArticle', authenticate, async (req,res) => {
         };
 
         const alreadyCommentByOtheres = await Comment.findOne({articleId: articleId});
-    
 
         if(alreadyCommentByOtheres !== null){
 
@@ -361,46 +416,6 @@ router.get('/commentArticle', authenticate, async (req,res) => {
     };
 });
 
-//============================= Get search Article =============================
-
-router.get('/getBlogs', authenticate, async (req,res) => {
-    
-    try{
-        const SearchValue = req.query.Search;
-
-        let aggregateQuery = [];
-
-        if(SearchValue === ""){
-            const blogs = await User.find();
-            
-            res.send(blogs);
-        }
-
-        else{
-            aggregateQuery.push(  
-                {
-                    $match: {
-                        $or: [
-                            {"Articles.title": RegExp("^" + SearchValue, 'i')},
-                            {"Articles.category": RegExp("^" + SearchValue, 'i')},
-                            {"Articles.tags": RegExp("^" + SearchValue, 'i')},
-                        ]   
-                    },
-                },    
-            );
-    
-            //============================= Apply AggreagteQuery In User Collection =============================
-            const matchUser = await User.aggregate([aggregateQuery]);
-            console.log("matchUser", matchUser);
-            //============================= Send Response =============================
-            res.send(matchUser); 
-        }
-    }
-    catch(err) {
-        console.log(err);
-        
-    };
-});
 
 //============================= Logout =============================
 

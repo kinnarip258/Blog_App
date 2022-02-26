@@ -54,7 +54,11 @@ const userSchema = new mongoose.Schema({
             },
             banner: {
                 type: String,
-            }
+            },
+            createAt:{
+                type: Date,
+                default: Date.now()
+            },
         }
     ],
     Tokens: [

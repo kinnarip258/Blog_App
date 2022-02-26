@@ -43,7 +43,14 @@ const Navbar = () => {
                             {
                                 User && (
                                     <>
-                                        <h3>{`Welcome ${User.name} Sign In as ${User.email}`}</h3>
+                                        <div className='navDetails'>
+                                            {
+                                                User.profilePhoto && (
+                                                    <img src={User.profilePhoto[0]} alt= "Profile Picture"/>
+                                                )
+                                            }
+                                            <h3>{`Welcome ${User.name} Sign In as ${User.email}`}</h3>
+                                        </div>
                                     </>
                                 )
                             }

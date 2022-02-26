@@ -125,14 +125,14 @@ body {
 }
 
 .nav_div {
-  height: 50px;
+  height: 80px;
   display: flex;
   justify-content: space-around;
   align-items: center;
   box-sizing: border-box;
   border: 1px solid blueviolet;
   background-color: rgb(146, 55, 231);
-  font-size: 18px;
+  font-size: 20px;
 }
 .links {
   padding: 17px;
@@ -142,11 +142,6 @@ body {
   position: relative;
 }
 
-h3 {
-  padding-left: 1100px;
-  color: white;
-  font-size: 18px;
-}
 .header_div h1 {
   text-align: center;
   margin-left: 100px;
@@ -170,17 +165,6 @@ h3 {
   text-align: left;
 }
 
-/* .profile {
-  position: relative;
-  z-index: 1;
-  background: #ffffff;
-  max-width: 360px;
-  margin: 0 770px 100px;
-  padding: 45px;
-  text-align: center;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-  width: 100%;
-} */
 .profile {
   position: relative;
   z-index: 1;
@@ -378,6 +362,7 @@ img {
   margin-top: 10px;
   margin-left: 340px;
   color: blueviolet;
+  cursor: pointer;
 }
 
 .likes button {
@@ -410,4 +395,17 @@ img {
   width: 60%;
   margin: 0 auto;
   margin-bottom: 30px;
+}
+
+.navDetails img {
+  padding-left: 950px;
+  width: 60px;
+  height: 60px;
+  margin-bottom: -55px;
+}
+
+.navDetails h3 {
+  padding-left: 1020px;
+  color: white;
+  font-size: 20px;
 }

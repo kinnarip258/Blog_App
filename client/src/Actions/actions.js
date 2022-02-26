@@ -99,6 +99,60 @@ export const userProfile = () => {
 //============================= End =============================
 
 
+//============================= Get Blogs Action Start =============================
+
+export const getBlogs = (searchValue) => {
+ 
+    return (dispatch) => {
+        Axios.get(`/getBlogs/?Search=${searchValue}`)
+        .then((res) => {
+            console.log("res.data", res.data);
+            dispatch({type: Get_Blogs, payload: res.data});
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+}
+
+//============================= End =============================
+
+//============================= Add Article Action Start =============================
+
+export const addArticle = (values,Banner) => {
+    
+    return (dispatch) => {
+        Axios.post(`/addArticle`, {values, Banner})
+        .then(() => {
+            toast.success(`Article Added Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
+            dispatch({type: Add_Article})
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+}
+
+//============================= End =============================
+
+//============================= Add Article Action Start =============================
+
+export const addArticleBanner = (articleBanner) => {
+
+    return (dispatch) => {
+        Axios.post(`/addArticleBanner`, articleBanner)
+        .then((res) => {
+            dispatch({type: Add_ArticleBanner, payload: res.data});
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+}
+
+//============================= End =============================
+
+
 //============================= Edit Profile Action Start =============================
 
 export const updateArticle = (id, values, Banner) => {
@@ -136,65 +190,14 @@ export const deleteArticle = (id) => {
 //============================= End =============================
 
 
-//============================= Add Article Action Start =============================
-
-export const addArticle = (values,Banner) => {
-    
-    return (dispatch) => {
-        Axios.post(`/addArticle`, {values, Banner})
-        .then(() => {
-            toast.success(`Article Added Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
-            dispatch({type: Add_Article})
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-}
-
-//============================= End =============================
-
-//============================= Add Article Action Start =============================
-
-export const addArticleBanner = (articleBanner) => {
-
-    return (dispatch) => {
-        Axios.post(`/addArticleBanner`, articleBanner)
-        .then((res) => {
-            dispatch({type: Add_ArticleBanner, payload: res.data});
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-}
-
-//============================= End =============================
-
-//============================= Get Blogs Action Start =============================
-
-export const getBlogs = (searchValue) => {
-    console.log("searchValue", searchValue);
-    return (dispatch) => {
-        Axios.get(`/getBlogs/?Search=${searchValue}`)
-        .then((res) => {
-            dispatch({type: Get_Blogs, payload: res.data});
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-}
-
-//============================= End =============================
-
 //============================= Like Article Action Start =============================
 
 export const likeArticle = (articleId, userId, username) => {
 
     return (dispatch) => {
         Axios.post(`/likeArticle/?ID=${articleId}`, {userId, username})
-        .then(() => {
+        .then((res) => {
+            toast.success(`${res.data.msg}`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
             dispatch({type: Like_Article});
         })
         .catch(err => {
@@ -228,7 +231,8 @@ export const commentArticle = (comment, articleId, userId, username) => {
 
     return (dispatch) => {
         Axios.post(`/commentArticle/?ID=${articleId}`, {comment, userId, username})
-        .then(() => {
+        .then((res) => {
+            toast.success(`${res.data.msg}`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
             dispatch({type: Comment_Article});
         })
         .catch(err => {
@@ -255,19 +259,6 @@ export const getCommentArticles = () => {
 }
 
 //============================= End =============================
-
-
-//============================= Loading Action Start =============================
-
-export const loading = () => {
-
-    return (dispatch) => {
-        dispatch(Loading());
-    }
-}
-
-//============================= End =============================
-
 
 
 //============================= Logout Action Start =============================

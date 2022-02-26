@@ -6,7 +6,7 @@ import queryString from "query-string";
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import {useHistory} from "react-router-dom";
-import { addArticle, addArticleBanner, loading, updateArticle } from "../Actions/actions";
+import { addArticle, addArticleBanner, updateArticle } from "../Actions/actions";
 
 //========================== Import Modules End =============================
 
