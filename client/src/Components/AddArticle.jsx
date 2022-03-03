@@ -19,11 +19,9 @@ const AddArticle = () => {
 
   //============================= Redux States =============================
   const Toggle = useSelector(state => state.Toggle);
-
   const Banner = useSelector(state => state.Banner);
-
-  const User = useSelector(state => state.User)
-
+  const User = useSelector(state => state.User);
+  
   //============================= Get Edited User Id =============================
   const {id} = queryString.parse(window.location.search);
 
@@ -35,7 +33,6 @@ const AddArticle = () => {
 
   //============================= UseState =============================
   const [banner, setBanner] = useState('');
-  
   const [article, setArticle] = useState('');
 
   //============================= UseFormik =============================
@@ -61,18 +58,11 @@ const AddArticle = () => {
       }),
 
       onSubmit: (values) => {
-        if(id){ 
-          const formData = new FormData();
-          formData.append('image', banner[0]);
-          dispatch(addArticleBanner(formData)) 
-          setArticle(values) 
-        }
-        else{
-          const formData = new FormData();
-          formData.append('image', banner[0]);
-          dispatch(addArticleBanner(formData))
-          setArticle(values)
-        }
+        
+        const formData = new FormData();
+        formData.append('image', banner[0]);
+        setArticle(values);
+        dispatch(addArticleBanner(formData))
       }
   });
 
@@ -120,7 +110,8 @@ const AddArticle = () => {
                 <div className="header_div">
                     <h1>Add Article </h1>
                 </div> 
-    
+
+                
                 <div class="form">
                     <form class="login-form" onSubmit={formik.handleSubmit}>
                     <input {...formik.getFieldProps("title")} value={formik.values.title}  name="title"  type="text" placeholder="Title"/>

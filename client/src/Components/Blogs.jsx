@@ -1,7 +1,7 @@
 //========================== Import Modules Start ===========================
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { commentArticle, getBlogs, getCommentArticles, getLikeArticles, likeArticle } from '../Actions/actions';
+import { commentArticle, getBlogs, getCommentArticles, getLikeArticles, likeArticle, userProfile } from '../Actions/actions';
 import debounce from "lodash.debounce";
 //========================== Import Modules End =============================
 
@@ -18,6 +18,7 @@ const Blogs = () => {
   const Toggle = useSelector(state => state.Toggle);
   const User = useSelector(state => state.User);
 
+
   //============================= Get User Id and Username =============================
   const userId = User._id;
   const username = User.username;
@@ -30,12 +31,10 @@ const Blogs = () => {
   //============================= Handle Search =============================
   const handleSearch = (e) => {
     setSearch(e.target.value)
-
   }
 
   //============================= Handle Like =============================
   const handleLike = (ArticlesId) => {
-    console.log(ArticlesId, userId, username);
     dispatch(likeArticle(ArticlesId, userId, username));
   }
 
@@ -43,11 +42,15 @@ const Blogs = () => {
   const handleComment = (ArticlesId) => {
     dispatch(commentArticle(comment, ArticlesId, userId, username));
   }
+
   //============================= Optimise Search Employee =============================
   const optimiseVersion = debounce(handleSearch, [500])
 
+
+
   //============================= useEffect For Get Blogs, Likes, Comments =============================
   useEffect(() => {
+    dispatch(userProfile());
     dispatch(getBlogs(search));
     dispatch(getLikeArticles());
     dispatch(getCommentArticles());
@@ -87,8 +90,7 @@ const Blogs = () => {
                                     <div className='banner'>
                                       <img src={blog.Articles.banner} alt='Articles banner'/>
                                     </div>
-                                    
-                                    
+                                     
                                   <div className='comment'>
                                     <input  
                                     placeholder='Write Comments...'
@@ -104,9 +106,12 @@ const Blogs = () => {
                                                   <>
                                                     {showLikedUser === "Likes" ? (
                                                       <div className='likes'>
-                                                        <h2 onClick={() => setShowLikedUser("users")}>{`${ele.Users.length} Likes`}</h2>
+                                                        {
+                                                          ele.Users.length > 0 ? <h2 onClick={() => setShowLikedUser("users")}>{`${ele.Users.length} Likes`}</h2>
+                                                          : null
+                                                        }
                                                       </div>
-                                                    ) :null
+                                                    ) : null
                                                     }
                                                   </>
                                                 )
@@ -123,7 +128,6 @@ const Blogs = () => {
                                                             <h2 onClick={() => setShowLikedUser("Likes")}>{`${user.username}`}</h2>
                                                           </div>
                                                         ) : null}
-                                                        <h4></h4>
                                                       </>
                                                     )
                                                   })
@@ -134,34 +138,34 @@ const Blogs = () => {
                                         )
                                       })
                                     }
-
-                                    {/* {
+                                    {
                                       Like && Like.map((ele) => {
-                                        return (
+                                      return (
                                         <>
                                           {
                                             blog.Articles._id === ele.articleId ? 
                                               (
                                                 ele.Users.map(user => {
+                                                  
                                                   return (
                                                     <>
-                                                    {
-                                                      user.userId === userId ? 
-                                                        <button onClick={() => handleLike(blog.Articles._id)}>UnLike</button>
-                                                      : null
-                                                    }
+                                                      {
+                                                        user.userId === userId ? (
+                                                          <>
+                                                            <button onClick={() => handleLike(blog.Articles._id)}>UnLike</button> 
+                                                          </>
+                                                        ) : null
+                                                      }
                                                     </>
                                                   )
                                                 })
                                               )
                                             : null
-                                            }
-                                          </>
-                                        )
+                                          }
+                                        </>
+                                      )
                                       })                   
-                                    } */}
-                                     
-
+                                    }
                                     <button onClick={() => handleLike(blog.Articles._id)}>Like</button>
                                     <button onClick={() => handleComment(blog.Articles._id)}>Comment</button>
                                 

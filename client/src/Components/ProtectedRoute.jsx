@@ -26,7 +26,7 @@ const ProtectedRoute = ({authStatus, component: Component, ...rest}) => {
         </>
     )     
 }
-//{{ path: "/Login", state: { from: props.location } }}
+
 //============================= Protected Route Component End =============================
 
 //============================= Export Default Start =============================

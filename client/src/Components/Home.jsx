@@ -12,7 +12,7 @@ const Home = () => {
     
     return (
         <>
-            <div className="header_div">
+            <div className="home_div">
 
                 <h1> Home Page </h1>
                 

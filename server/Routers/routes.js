@@ -149,11 +149,12 @@ router.get('/userProfile',authenticate, async (req,res) => {
 
 //============================= Get search Article =============================
 
-router.get('/getBlogs',authenticate, async (req,res) => {
+router.put('/getBlogs', authenticate, async (req,res) => {
     
     try{
+        
         //============================= get Search User =============================
-        const SearchValue = req.query.Search;
+        const {SearchValue} = req.body;
 
         let aggregateQuery = [];
 
@@ -181,7 +182,7 @@ router.get('/getBlogs',authenticate, async (req,res) => {
                         $or: [
                             {"Articles.title": new RegExp("^" + SearchValue, 'i')},
                             {"Articles.category": new RegExp("^" + SearchValue, 'i')},
-                            {"Articles.tags": new RegExp("^" + SearchValue, 'i')},
+                            {"Articles.tags": new RegExp(SearchValue, 'i')},
                             {"username": new RegExp("^" + SearchValue, 'i')}
                         ]   
                     },

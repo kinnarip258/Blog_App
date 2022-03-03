@@ -1,6 +1,6 @@
 //========================== Import Modules Start ===========================
 
-import { SignIn_User, SignUp_User, SignUp_Toggle, User_Profile, Updated_Profile,Logout_User, Delete_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Updated_Article, Delete_Article, Get_Blogs, Loading, Like_Article, Get_LikeArticle, Comment_Article, Get_CommentArticle } from "../Actions/actionTypes";
+import { SignIn_User, SignUp_User, SignUp_Toggle, User_Profile, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Updated_Article, Delete_Article, Get_Blogs, Like_Article, Get_LikeArticle, Comment_Article, Get_CommentArticle } from "../Actions/actionTypes";
 
 //========================== Import Modules End =============================
 
@@ -12,7 +12,7 @@ const initialState = {
     Banner: [],
     Like: [],
     Comment: [],
-    MyArticles:[]
+    MyArticles:[],
 }
 
 const Reducer = (state = initialState, action) => {
@@ -35,7 +35,7 @@ const Reducer = (state = initialState, action) => {
 
             return{
                 ...state,
-                Toggle: false
+                Toggle: false,
             }
 
         case SignIn_User:
@@ -51,7 +51,7 @@ const Reducer = (state = initialState, action) => {
                 ...state,
                 User: action.payload.LoginUser,
                 MyArticles: action.payload.MyArticles,
-                Toggle: false
+                Toggle: false,
             }
         case Get_Blogs:
             
@@ -63,11 +63,11 @@ const Reducer = (state = initialState, action) => {
 
         case Add_Article: 
 
-        return {
-            ...state,
-            Toggle: true,
-            Banner: []
-        }
+            return {
+                ...state,
+                Toggle: true,
+                Banner: []
+            }
 
         case Add_ArticleBanner:
             
@@ -121,7 +121,7 @@ const Reducer = (state = initialState, action) => {
 
         case Logout_User :
 
-            return{
+            return {
                 ...state,
                 LoginState : true,
                 User : [],
@@ -129,7 +129,8 @@ const Reducer = (state = initialState, action) => {
                 Blogs: [],
                 Banner: [],
                 Like: [],
-                Comment: []
+                Comment: [],
+                Loader: false
             }
            
         default: 

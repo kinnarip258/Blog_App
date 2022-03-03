@@ -417,6 +417,9 @@ img {
   margin-top: 10px;
 }
 
-.ArticalLikes {
-  
+.home_div {
+  text-align: center;
+  font-size: 36px;
+  color: blueviolet;
+  margin-top: 350px;
 }

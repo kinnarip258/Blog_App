@@ -1,6 +1,6 @@
 //========================== Import Modules Start ===========================
 
-import { SignUp_User , SignIn_User, SignUp_Toggle, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Delete_Article, Updated_Article, User_Profile, Get_Blogs, Loading, Like_Article, Get_LikeArticle, Comment_Article, Get_CommentArticle} from "./actionTypes";
+import { SignUp_User , SignIn_User, SignUp_Toggle, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Delete_Article, Updated_Article, User_Profile, Get_Blogs, Like_Article, Get_LikeArticle, Comment_Article, Get_CommentArticle} from "./actionTypes";
 import Axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -101,12 +101,12 @@ export const userProfile = () => {
 
 //============================= Get Blogs Action Start =============================
 
-export const getBlogs = (searchValue) => {
- 
+export const getBlogs = (SearchValue) => {
+    
+
     return (dispatch) => {
-        Axios.get(`/getBlogs/?Search=${searchValue}`)
+        Axios.put(`/getBlogs`, {SearchValue})
         .then((res) => {
-            console.log("res.data", res.data);
             dispatch({type: Get_Blogs, payload: res.data});
         })
         .catch(err => {
