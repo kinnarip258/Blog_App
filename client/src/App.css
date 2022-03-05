@@ -377,23 +377,10 @@ img {
   margin-top: -53px;
   font-display: center;
 }
-
-/* .likesUser {
-  position: relative;
-  z-index: 1;
-  background: rgb(224, 220, 220);
-  padding: 45px;
-  text-align: center;
-  box-shadow: 0 0 20px 0 rgb(0 0 0 / 20%), 0 5px 5px 0 rgb(0 0 0 / 24%);
-  width: 60%;
-  margin: 0 auto;
-  margin-bottom: 30px;
-} */
-
+                                                                                                                                                                                            
 .likesUser h2 {
   position: relative;
   z-index: 1;
-  /* background: rgb(224, 220, 220); */
   justify-content: center;
   padding: 45px;
   box-shadow: 0 0 20px 0 rgb(0 0 0 / 20%), 0 5px 5px 0 rgb(0 0 0 / 24%);

@@ -59,6 +59,24 @@ const userSchema = new mongoose.Schema({
                 type: Date,
                 default: Date.now
             },
+            Likes: [
+                {
+                    type: mongoose.Types.ObjectId
+                }
+            ],
+            Comment: [
+                {
+                    userId: {
+                        type: String
+                    },
+                    username:{
+                        type: String
+                    },
+                    comment: {
+                        type: String
+                    }
+                }
+            ],
         }
     ],
     Tokens: [

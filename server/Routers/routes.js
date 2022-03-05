@@ -10,8 +10,7 @@ const sendMail = require('../mail/nodemailer');
 const upload = require('../fileupload/multer');
 const cloudinary = require('../fileupload/cloudinary');
 const User = require('../models/userSchema');
-const Like = require('../models/likeSchema');
-const Comment = require('../models/commentSchema');
+
 //========================== Load Modules End =============================
 
 //============================= Register =============================
@@ -148,8 +147,8 @@ router.get('/userProfile',authenticate, async (req,res) => {
 
 
 //============================= Get search Article =============================
-
-router.put('/getBlogs', authenticate, async (req,res) => {
+//authenticate,
+router.put('/getBlogs',  async (req,res) => {
     
     try{
         
@@ -296,10 +295,7 @@ router.put('/updateArticle', authenticate, async (req,res) => {
            
             //============================= Send Response =============================
             res.send({msg: "Profile Updated Sucessfully!" })
-        }
-        
-
-        
+        }  
     }
     catch(err){
         //============================= Send Error Message =============================
@@ -319,12 +315,6 @@ router.delete('/deleteArticle', authenticate, async (req,res) => {
             { email: req.authenticateUser.email },
             { $pull: { Articles: { _id: req.query.ID } } }
         )
-        
-        //============================= Delete Article Data From Like Model =============================
-        await Like.findOneAndDelete({articleId : req.query.ID})
-
-        //============================= Delete Article Data From Comment Model =============================
-        await Comment.findOneAndDelete({articleId : req.query.ID})
 
         //============================= Send Response =============================
         res.send({msg: "User Deleted Successfully!"})
@@ -341,64 +331,59 @@ router.post('/likeArticle', authenticate, async (req,res) => {
     
     try{
     
-        const {userId, username} = req.body;
+        const {userId} = req.body;
         const articleId = req.query.ID;
         
-        const alreadyLikeByOtheres = await Like.findOne({articleId: articleId});
-    
-        if(alreadyLikeByOtheres !== null) {
-            const alreadyLike = alreadyLikeByOtheres.Users.find((user) => user.userId === userId ? user : null)
-            
-            if(alreadyLike !== undefined){
-
-                //============================= Like Article =============================
-                await Like.updateOne({articleId: articleId},{ $pull: { Users: { userId: userId }} } )
-                
-                res.send({msg: 'UnLike The Article'});
-            }
-            else{
-                const user = {
-                    userId: userId,
-                    username: username
-                }
-    
-                //============================= Like Article =============================
-                await Like.updateOne({articleId: articleId},{ $push: { Users: user} } )
-                
-                res.send({msg: "Like The Article"});
-    
-            }
-            
-        }
-        else{
-            
-            const user = {
-                userId: userId,
-                username: username
-            }
-
-            await new Like({articleId}).save();
-            
-            //============================= Like Article =============================
-            await Like.updateOne({articleId: articleId},{ $push: { Users: user} } )
-            
-            res.send({msg: "Like The Article"});
-
-        }
-        
+        //============================= Like Article =============================
+        await User.findOneAndUpdate(
+            { "Articles._id": articleId }, {$push: {"Articles.$.Likes": userId}}
+        );
+          
+        res.send({msg: "Like The Article"});
+ 
     }
     catch(err) {
         res.send("error" + err)
     };
 });
 
-//============================= Get Like Article =============================
+//============================= UnLike Article =============================
 
-router.get('/likeArticle', authenticate, async (req,res) => {
+router.post('/unLikeArticle', authenticate, async (req,res) => {
     
     try{
+    
+        const {userId} = req.body;
+        const articleId = req.query.ID;
+        
+        //============================= Like Article =============================
+        await User.findOneAndUpdate(
+            { "Articles._id": articleId }, {$pull: {"Articles.$.Likes": userId}}
+        );
+          
+        res.send({msg: "UnLike The Article"});
+ 
+    }
+    catch(err) {
+        res.send("error" + err)
+    };
+});
+
+//============================= Get LikeUser Article =============================
+
+router.get('/likeUser',authenticate, async (req,res) => {
+    
+    try{
+
+        let aggregateQuery = [];
+
+        aggregateQuery.push(
+            {
+                $project: {username: 1}
+            }
+        )
         //============================= Get Like Articles =============================
-        const likes = await Like.find();
+        const likes = await User.aggregate([aggregateQuery]);
         res.send(likes);
     }
     catch(err) {
@@ -411,7 +396,7 @@ router.get('/likeArticle', authenticate, async (req,res) => {
 router.post('/commentArticle', authenticate, async (req,res) => {
     
     try{
-        const {userId, username, comment} = req.body;
+        const {userId,username, comment} = req.body;
         const articleId = req.query.ID;
        
         const user = {
@@ -420,40 +405,13 @@ router.post('/commentArticle', authenticate, async (req,res) => {
             comment: comment
         };
 
-        const alreadyCommentByOtheres = await Comment.findOne({articleId: articleId});
+        //============================= Like Article =============================
+        await User.findOneAndUpdate(
+            { "Articles._id": articleId }, {$push: {"Articles.$.Comment": user}}
+        );
 
-        if(alreadyCommentByOtheres !== null){
-
-            //============================= Comment Article =============================
-            await Comment.updateOne({articleId: articleId}, {$push: { Users: user}});
-
-            res.send({msg: "Comment The Article"});
-        }
-        else {
-
-            await new Comment({articleId}).save();
-
-            //============================= Comment Article =============================
-            await Comment.updateOne({articleId: articleId}, {$push: { Users: user}});
-
-            res.send({msg: "Comment The Article"});
-        }
+        res.send({msg: "Comment The Article"});
         
-    }
-    catch(err) {
-        res.send("error" + err)
-    };
-});
-
-//============================= Get Comment Article =============================
-
-router.get('/commentArticle', authenticate, async (req,res) => {
-    
-    try{
-
-        //============================= get Comment Article =============================
-        const comments = await Comment.find();
-        res.send(comments);
     }
     catch(err) {
         res.send("error" + err)

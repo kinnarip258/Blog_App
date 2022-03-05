@@ -1,6 +1,6 @@
 //========================== Import Modules Start ===========================
 
-import { SignUp_User , SignIn_User, SignUp_Toggle, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Delete_Article, Updated_Article, User_Profile, Get_Blogs, Like_Article, Get_LikeArticle, Comment_Article, Get_CommentArticle} from "./actionTypes";
+import { SignUp_User , SignIn_User, SignUp_Toggle, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Delete_Article, Updated_Article, User_Profile, Get_Blogs, Like_Article, Comment_Article, Unlike_Article, Like_User} from "./actionTypes";
 import Axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -208,14 +208,16 @@ export const likeArticle = (articleId, userId, username) => {
 
 //============================= End =============================
 
-//============================= Get Like Articles Action Start =============================
 
-export const getLikeArticles = () => {
+//============================= UnLike Article Action Start =============================
+
+export const unlikeArticle = (articleId, userId, username) => {
 
     return (dispatch) => {
-        Axios.get(`/likeArticle`)
+        Axios.post(`/unLikeArticle/?ID=${articleId}`, {userId, username})
         .then((res) => {
-            dispatch({type: Get_LikeArticle, payload: res.data});
+            toast.success(`${res.data.msg}`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
+            dispatch({type: Unlike_Article});
         })
         .catch(err => {
             console.log(err);
@@ -224,6 +226,26 @@ export const getLikeArticles = () => {
 }
 
 //============================= End =============================
+
+
+
+//============================= Like User Action Start =============================
+
+export const likeUser = () => {
+
+    return (dispatch) => {
+        Axios.get(`/likeUser`)
+        .then((res) => {
+            dispatch({type: Like_User, payload: res.data});
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+}
+
+//============================= End =============================
+
 
 //============================= Comment Article Action Start =============================
 
@@ -242,24 +264,6 @@ export const commentArticle = (comment, articleId, userId, username) => {
 }
 
 //============================= End =============================
-
-//============================= Get Comment Articles Action Start =============================
-
-export const getCommentArticles = () => {
-
-    return (dispatch) => {
-        Axios.get(`/commentArticle`)
-        .then((res) => {
-            dispatch({type: Get_CommentArticle, payload: res.data});
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-}
-
-//============================= End =============================
-
 
 //============================= Logout Action Start =============================
 

@@ -2,7 +2,7 @@
 import React, { useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { deleteArticle, getLikeArticles, userProfile } from '../Actions/actions';
+import { deleteArticle, userProfile } from '../Actions/actions';
 //========================== Import Modules End =============================
 
 
@@ -13,10 +13,7 @@ const MyArticles = () => {
     const User = useSelector(state => state.User);
     const Toggle = useSelector(state => state.Toggle);
     const MyArticles = useSelector(state => state.MyArticles);
-    const Like = useSelector(state => state.Like);
-    const Comment = useSelector(state => state.Comment);
 
-    console.log("Like", Like);
     //============================= dispatch Api Request =============================
     const dispatch = useDispatch();
 
@@ -32,8 +29,7 @@ const MyArticles = () => {
     
     //============================= UseEffect For User Profile =============================
     useEffect(() => {
-        dispatch(userProfile());
-        dispatch(getLikeArticles());
+      dispatch(userProfile());
     }, [dispatch, Toggle]);
 
   return (
@@ -64,72 +60,10 @@ const MyArticles = () => {
                                 <div className='banner'>
                                     <img src={article.Articles.banner} alt='article banner'/>
                                 </div>
-                                {
-                                    Like && Like.map((ele) => {
-                                        return (
-                                          <>
-                                            {
-                                                article.Articles._id === ele.articleId ? (
-                                                    <>
-                                                        {showLikedUser === "Likes" ? (
-                                                            <div className='ArticalLikes'>
-                                                                <h2 onClick={() => setShowLikedUser("users")}>{`${ele.Users.length} Likes`}</h2>
-                                                            </div>
-                                                        ) : null}
-                                                    </>
-                                                    )
-                                                : null
-                                            }
-                                            {
-                                                article.Articles._id === ele.articleId ? (
-                                                    ele.Users.map(user => {
-                                                        return (
-                                                            <>
-                                                                {showLikedUser === "users" ? (
-                                                                <div className='likesUser'>
-                                                                    <h2 onClick={() => setShowLikedUser("Likes")}>{`${user.username}`}</h2>
-                                                                </div>
-                                                                ) : null}
-                                                            </>
-                                                        )
-                                                    })
-                                                ) : null
-                                            }
-                                            </>
-                                        )
-                                    })
-                                }
-                                {
-                                      Comment && Comment.map((ele) => {
-                                        return (
-                                          <>
-                                            {
-                                                article.Articles._id === ele.articleId ? 
-                                                (
-                                                  <>
-                                                    <h2 style={{ margin: 0 , textAlign: "left" }}>Comments</h2>
-                                                    {
-                                                      ele.Users.map((user) => {
-                                                        return (
-                                                          <>
-                                                            <div className= 'showcomment'>
-                                                              <h2 >{user.username}</h2>
-                                                              <p>{user.comment}</p>
-                                                            </div>
-                                                          </>
-                                                        )
-                                                      })
-                                                    }
-                                                  </>
-                                                )
-                                              : null
-                                            }
-                                          </>
-                                        )
-                                      })
-                                    }
+
                                 <NavLink to = {`/EditArticle/:?id=${article.Articles._id}`}><button>Edit</button></NavLink>
                                 <button onClick={() => handleDelete(article.Articles._id)}>Delete</button>
+                               
                             </div> 
                         </> 
                     )

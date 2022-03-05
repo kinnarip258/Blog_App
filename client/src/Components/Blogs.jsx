@@ -1,8 +1,9 @@
 //========================== Import Modules Start ===========================
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { commentArticle, getBlogs, getCommentArticles, getLikeArticles, likeArticle, userProfile } from '../Actions/actions';
+import { commentArticle, getBlogs, likeArticle, likeUser, unlikeArticle, userProfile } from '../Actions/actions';
 import debounce from "lodash.debounce";
+
 //========================== Import Modules End =============================
 
 //============================= All Blogs Component Start =============================
@@ -12,17 +13,15 @@ const Blogs = () => {
   const dispatch = useDispatch();
 
   //============================= Redux States =============================
-  const Blogs = useSelector(state => state.Blogs);
-  const Like = useSelector(state => state.Like);
-  const Comment = useSelector(state => state.Comment);
+  const Blogs = useSelector(state => state.Blogs); 
   const Toggle = useSelector(state => state.Toggle);
   const User = useSelector(state => state.User);
-
-
+  const Like = useSelector(state => state.Like);
+  console.log("Like", Like);
   //============================= Get User Id and Username =============================
   const userId = User._id;
   const username = User.username;
-  
+
   //============================= UseStates =============================
   const [search, setSearch] = useState("");
   const [comment, setComment] = useState("");
@@ -38,6 +37,11 @@ const Blogs = () => {
     dispatch(likeArticle(ArticlesId, userId, username));
   }
 
+  //============================= Handle UnLike =============================
+  const handleUnlike = (ArticlesId) => {
+    dispatch(unlikeArticle(ArticlesId, userId, username));
+  }
+
   //============================= Handle Comment =============================
   const handleComment = (ArticlesId) => {
     dispatch(commentArticle(comment, ArticlesId, userId, username));
@@ -46,14 +50,11 @@ const Blogs = () => {
   //============================= Optimise Search Employee =============================
   const optimiseVersion = debounce(handleSearch, [500])
 
-
-
   //============================= useEffect For Get Blogs, Likes, Comments =============================
   useEffect(() => {
     dispatch(userProfile());
     dispatch(getBlogs(search));
-    dispatch(getLikeArticles());
-    dispatch(getCommentArticles());
+    dispatch(likeUser());
   }, [dispatch, search, Toggle]);
   
   return (
@@ -96,107 +97,75 @@ const Blogs = () => {
                                     placeholder='Write Comments...'
                                     onChange={(e) => setComment(e.target.value)}/>
                                    </div>
-                                   {
-                                      Like && Like.map((ele) => {
-                                        return (
-                                          <>
+                                  
+                                  {
+                                    blog.Articles.Likes.length > 0 ? 
+                                    (
+                                      <>
+                                        {showLikedUser === "Likes" ? (
+                                          <div className='likes'>
+                                            <h2 onClick={() => setShowLikedUser("users")}>{`${blog.Articles.Likes.length} Likes`}</h2>
+                                          </div>
+                                          ) : null
+                                        }
+                                      </>
+                                    ) : null
+                                  }
+                                  {
+                                    Like && Like.map((ele => {
+                                      return (
+                                        <>
+                                          {showLikedUser === "users" ? (
+                                            <div className='likesUser'>
                                             {
-                                              blog.Articles._id === ele.articleId ?
-                                                (
+                                              blog.Articles.Likes.map(user => {
+                                                <h2>user: {user}</h2>
+                                                return (
                                                   <>
-                                                    {showLikedUser === "Likes" ? (
-                                                      <div className='likes'>
-                                                        {
-                                                          ele.Users.length > 0 ? <h2 onClick={() => setShowLikedUser("users")}>{`${ele.Users.length} Likes`}</h2>
-                                                          : null
-                                                        }
-                                                      </div>
-                                                    ) : null
+                                                    {
+                                                      user === ele._id ? (
+                                                        <>
+                                                          <h2 onClick={() => setShowLikedUser("Likes")}>{`${ele.username}`}</h2>
+                                                        </>
+                                                      ) :null
                                                     }
                                                   </>
                                                 )
-                                              : null
+                                              })
                                             }
-                                            {
-                                              blog.Articles._id === ele.articleId ? 
-                                                (
-                                                  ele.Users.map(user => {
-                                                    return (
-                                                      <>
-                                                        {showLikedUser === "users" ? (
-                                                          <div className='likesUser'>
-                                                            <h2 onClick={() => setShowLikedUser("Likes")}>{`${user.username}`}</h2>
-                                                          </div>
-                                                        ) : null}
-                                                      </>
-                                                    )
-                                                  })
-                                                )
-                                              : null
-                                            }
-                                          </>
-                                        )
-                                      })
-                                    }
-                                    {
-                                      Like && Like.map((ele) => {
-                                      return (
-                                        <>
-                                          {
-                                            blog.Articles._id === ele.articleId ? 
-                                              (
-                                                ele.Users.map(user => {
-                                                  
-                                                  return (
-                                                    <>
-                                                      {
-                                                        user.userId === userId ? (
-                                                          <>
-                                                            <button onClick={() => handleLike(blog.Articles._id)}>UnLike</button> 
-                                                          </>
-                                                        ) : null
-                                                      }
-                                                    </>
-                                                  )
-                                                })
-                                              )
-                                            : null
+                                              
+                                            </div>
+                                            ) : null
                                           }
                                         </>
                                       )
-                                      })                   
-                                    }
-                                    <button onClick={() => handleLike(blog.Articles._id)}>Like</button>
-                                    <button onClick={() => handleComment(blog.Articles._id)}>Comment</button>
+                                    }))   
+                                  }
+                                  {
+                                    blog.Articles.Likes.includes(userId) ? (
+                                      <>
+                                        <button onClick={() => handleUnlike(blog.Articles._id)}>UnLike</button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <button onClick={() => handleLike(blog.Articles._id)}>Like</button>
+                                      </>
+                                    )
+                                  }
+                                  <button onClick={() => handleComment(blog.Articles._id)}>Comment</button>
                                 
+                                    <h2 style={{ margin: 0 , textAlign: "left" }}>Comments</h2>
                                     {
-                                      Comment && Comment.map((ele) => {
-                                        return (
-                                          <>
-                                            {
-                                              blog.Articles._id === ele.articleId ? 
-                                                (
-                                                  <>
-                                                    <h2 style={{ margin: 0 , textAlign: "left" }}>Comments</h2>
-                                                    {
-                                                      ele.Users.map((user) => {
-                                                        return (
-                                                          <>
-                                                            <div className= 'showcomment'>
-                                                              <h2 >{user.username}</h2>
-                                                              <p>{user.comment}</p>
-                                                            </div>
-                                                          </>
-                                                        )
-                                                      })
-                                                    }
-                                                  </>
-                                                )
-                                              : null
-                                            }
-                                          </>
-                                        )
-                                      })
+                                      blog.Articles.Comment.map(user => {
+                                          return (
+                                            <>
+                                              <div className= 'showcomment'>
+                                                <h2 >{user.username}</h2>
+                                                <p>{user.comment}</p>
+                                              </div>
+                                            </>
+                                          )
+                                        })
                                     }
                                 </>
                               )

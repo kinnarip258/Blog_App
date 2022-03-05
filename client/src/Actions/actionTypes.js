@@ -17,9 +17,9 @@ export const Add_ArticleBanner = "Add_ArticleBanner";
 export const Updated_Article = "Updated_Article";
 export const Delete_Article = "Delete_Article";
 export const Like_Article = "Like_Article";
+export const Unlike_Article = "Unlike_Article";
+export const Like_User = "Like_User";
 export const Comment_Article = "Comment_Article";
-export const Get_LikeArticle = "Get_LikeArticle";
-export const Get_CommentArticle = "Get_CommentArticle";
 export const Logout_User = "Logout_User";
 
 //============================= Export Action Types End =============================
