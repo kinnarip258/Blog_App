@@ -21,5 +21,5 @@ export const Unlike_Article = "Unlike_Article";
 export const Like_User = "Like_User";
 export const Comment_Article = "Comment_Article";
 export const Logout_User = "Logout_User";
-
+export const Loading = "Loading";
 //============================= Export Action Types End =============================

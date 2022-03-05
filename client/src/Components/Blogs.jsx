@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { commentArticle, getBlogs, likeArticle, likeUser, unlikeArticle, userProfile } from '../Actions/actions';
 import debounce from "lodash.debounce";
+import Checkbox from './Checkbox';
 
 //========================== Import Modules End =============================
 
@@ -17,34 +18,46 @@ const Blogs = () => {
   const Toggle = useSelector(state => state.Toggle);
   const User = useSelector(state => state.User);
   const Like = useSelector(state => state.Like);
-  console.log("Like", Like);
+
   //============================= Get User Id and Username =============================
   const userId = User._id;
-  const username = User.username;
 
   //============================= UseStates =============================
   const [search, setSearch] = useState("");
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState([]);
   const [showLikedUser, setShowLikedUser] = useState("Likes");
-
+  const [allTags, setAllTags] = useState([]);
+ 
   //============================= Handle Search =============================
   const handleSearch = (e) => {
     setSearch(e.target.value)
   }
 
+  const handleClick = (e) => {
+    const { id, checked } = e.target;
+    setAllTags([...allTags, id]);
+    if (!checked) {
+      setAllTags(allTags.filter((item) => item !== id));
+    }
+  }
+
+  const Comments = (e) => {
+    setComment({id: e.target.id, value: e.target.value})
+  }
+
   //============================= Handle Like =============================
   const handleLike = (ArticlesId) => {
-    dispatch(likeArticle(ArticlesId, userId, username));
+    dispatch(likeArticle(ArticlesId, userId));
   }
 
   //============================= Handle UnLike =============================
   const handleUnlike = (ArticlesId) => {
-    dispatch(unlikeArticle(ArticlesId, userId, username));
+    dispatch(unlikeArticle(ArticlesId, userId));
   }
 
   //============================= Handle Comment =============================
   const handleComment = (ArticlesId) => {
-    dispatch(commentArticle(comment, ArticlesId, userId, username));
+    dispatch(commentArticle(comment.value, ArticlesId, userId));
   }
 
   //============================= Optimise Search Employee =============================
@@ -52,10 +65,11 @@ const Blogs = () => {
 
   //============================= useEffect For Get Blogs, Likes, Comments =============================
   useEffect(() => {
+    setComment("");
     dispatch(userProfile());
-    dispatch(getBlogs(search));
+    dispatch(getBlogs(search, allTags));
     dispatch(likeUser());
-  }, [dispatch, search, Toggle]);
+  }, [dispatch, search, Toggle, allTags]);
   
   return (
     <>
@@ -66,12 +80,26 @@ const Blogs = () => {
       <div className='search'>
         <input name='search' placeholder='Search Blogs...' onKeyUp={optimiseVersion}/>
       </div>
+      <div className="blogtags">
+        <Checkbox type='checkbox' id={'#birds'} handleClick = {handleClick} isChecked={allTags.includes('#birds')}/> <label>#birds</label>
+        <Checkbox type='checkbox' id={'#nature'} handleClick = {handleClick} isChecked={allTags.includes('#nature')}/>  <label>#nature</label>
+        <Checkbox type='checkbox' id={'#business'} handleClick = {handleClick} isChecked={allTags.includes('#business')}/>  <label>#business</label>
+        <Checkbox type='checkbox' id={'#fashion'} handleClick = {handleClick} isChecked={allTags.includes('#fashion')}/>  <label>#fashion</label>
+        <Checkbox type='checkbox' id={'#beautiful'} handleClick = {handleClick} isChecked={allTags.includes('#beautiful')}/>  <label>#beautiful</label>
+        <Checkbox type='checkbox' id={'#southIndian'} handleClick = {handleClick} isChecked={allTags.includes('#southIndian')}/>  <label>#southIndian</label>
+        <Checkbox type='checkbox' id={'#sweet'} handleClick = {handleClick} isChecked={allTags.includes('#sweet')}/>  <label>#sweet</label>
+        <Checkbox type='checkbox' id={'#food'} handleClick = {handleClick} isChecked={allTags.includes('#food')}/>  <label>#food</label>
+        </div>
       <div>
         {
           Blogs && Blogs.map(blog => {
                 return (
                   <> 
-                    <div class="blog" key={blog._id}>
+                    {
+                      blog._id !== userId ? (
+                        <>
+                          {
+                            <div class="blog" key={blog._id}>
                             <div className='blog_header'>
                               <h2>Author : {blog.username}</h2>
                             </div>
@@ -94,8 +122,13 @@ const Blogs = () => {
                                      
                                   <div className='comment'>
                                     <input  
-                                    placeholder='Write Comments...'
-                                    onChange={(e) => setComment(e.target.value)}/>
+                                      key={blog._id}
+                                      id={blog._id}
+                                      type='text'
+                                      placeholder='Write Comments...'
+                                      onChange={Comments} 
+                                      value={comment}
+                                      />
                                    </div>
                                   
                                   {
@@ -119,7 +152,6 @@ const Blogs = () => {
                                             <div className='likesUser'>
                                             {
                                               blog.Articles.Likes.map(user => {
-                                                <h2>user: {user}</h2>
                                                 return (
                                                   <>
                                                     {
@@ -154,23 +186,42 @@ const Blogs = () => {
                                   }
                                   <button onClick={() => handleComment(blog.Articles._id)}>Comment</button>
                                 
-                                    <h2 style={{ margin: 0 , textAlign: "left" }}>Comments</h2>
-                                    {
-                                      blog.Articles.Comment.map(user => {
-                                          return (
-                                            <>
-                                              <div className= 'showcomment'>
-                                                <h2 >{user.username}</h2>
-                                                <p>{user.comment}</p>
-                                              </div>
-                                            </>
-                                          )
-                                        })
-                                    }
+                                  <h2 style={{ margin: 0 , textAlign: "left" }}>Comments</h2>
+                                  {
+                                    Like && Like.map((ele => {
+                                      return (
+                                        <>
+                                            {
+                                              blog.Articles.Comment.map(user => {
+                                                return (
+                                                  <>
+                                                    {
+                                                      user.userId === ele._id ? (
+                                                        <>
+                                                        <div className= 'showcomment'>
+                                                          <h2 >{ele.username}</h2>
+                                                          <p>{user.comment}</p>
+                                                        </div>
+                                                        </>
+                                                      ) :null
+                                                    }
+                                                  </>
+                                                )
+                                              })
+                                            } 
+                                        </>
+                                      )
+                                    }))   
+                                  }
                                 </>
                               )
                             }
-                    </div>  
+                          </div>  
+          
+                        }
+                        </>
+                      ) : null
+                    }
                   </>
                 )
               })

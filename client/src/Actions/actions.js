@@ -1,6 +1,6 @@
 //========================== Import Modules Start ===========================
 
-import { SignUp_User , SignIn_User, SignUp_Toggle, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Delete_Article, Updated_Article, User_Profile, Get_Blogs, Like_Article, Comment_Article, Unlike_Article, Like_User} from "./actionTypes";
+import { SignUp_User , SignIn_User, SignUp_Toggle, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Delete_Article, Updated_Article, User_Profile, Get_Blogs, Like_Article, Comment_Article, Unlike_Article, Like_User, Loading} from "./actionTypes";
 import Axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -101,11 +101,11 @@ export const userProfile = () => {
 
 //============================= Get Blogs Action Start =============================
 
-export const getBlogs = (SearchValue) => {
+export const getBlogs = (SearchValue, allTags) => {
     
 
     return (dispatch) => {
-        Axios.put(`/getBlogs`, {SearchValue})
+        Axios.put(`/getBlogs`, {SearchValue, allTags})
         .then((res) => {
             dispatch({type: Get_Blogs, payload: res.data});
         })
@@ -119,10 +119,10 @@ export const getBlogs = (SearchValue) => {
 
 //============================= Add Article Action Start =============================
 
-export const addArticle = (values,Banner) => {
+export const addArticle = (values,Banner,allTags) => {
     
     return (dispatch) => {
-        Axios.post(`/addArticle`, {values, Banner})
+        Axios.post(`/addArticle`, {values, Banner, allTags})
         .then(() => {
             toast.success(`Article Added Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
             dispatch({type: Add_Article})
@@ -155,10 +155,10 @@ export const addArticleBanner = (articleBanner) => {
 
 //============================= Update Article Action Start =============================
 
-export const updateArticle = (id, values, Banner) => {
+export const updateArticle = (id, values, Banner, allTags) => {
 
     return (dispatch) => {
-        Axios.put(`/updateArticle/?ID=${id}`, {values, Banner})
+        Axios.put(`/updateArticle/?ID=${id}`, {values, Banner, allTags})
         .then(() => {
             toast.success(`Article Updated Successfully!`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
             dispatch({type: Updated_Article})
@@ -249,10 +249,10 @@ export const likeUser = () => {
 
 //============================= Comment Article Action Start =============================
 
-export const commentArticle = (comment, articleId, userId, username) => {
+export const commentArticle = (comment, articleId, userId) => {
 
     return (dispatch) => {
-        Axios.post(`/commentArticle/?ID=${articleId}`, {comment, userId, username})
+        Axios.post(`/commentArticle/?ID=${articleId}`, {comment, userId})
         .then((res) => {
             toast.success(`${res.data.msg}`, { position: toast.POSITION.TOP_CENTER, autoClose: 2000 });
             dispatch({type: Comment_Article});
@@ -278,6 +278,18 @@ export const logout = () => {
         .catch(err => {
             console.log(err);
         })
+    }
+}
+
+//============================= End =============================
+
+
+//============================= Logout Action Start =============================
+
+export const loading = () => {
+
+    return (dispatch) => {
+        dispatch({type: Loading});
     }
 }
 

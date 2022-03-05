@@ -4,7 +4,9 @@ import React, {useState, useEffect} from "react";
 import {useFormik} from "formik";
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { loading, signUpToggle, signUpUser, updateProfile, uploadProfilePicture } from "../Actions/actions";
+import LinearProgress from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
+import { loading, signUpToggle, signUpUser, uploadProfilePicture } from "../Actions/actions";
 import {useHistory} from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -27,6 +29,7 @@ const SignUp = () => {
     
     //============================= Redux States =============================
     const Toggle = useSelector(state => state.Toggle);
+    const Loading = useSelector(state => state.Loading);
     
     //============================= UseFormik =============================
     const formik = useFormik({
@@ -65,6 +68,7 @@ const SignUp = () => {
             else{
                 const formData = new FormData();
                 formData.append('profilePicture', profilePhoto[0]);
+                dispatch(loading());
                 dispatch(signUpUser(values)) 
                 dispatch(uploadProfilePicture(formData, values.username))
             }
@@ -83,11 +87,22 @@ const SignUp = () => {
 
     return (
         <>
+            <div className="Loading">
+                {
+                    Loading ? (
+                        <>
+                            <Box sx={{ width: '100%' }}>
+                                <LinearProgress />
+                            </Box>
+                        </>
+                    ) : null
+                }
+            </div>
             <div class="login-page">
                 <div className="header_div">
                     <h1>Registration Form</h1>
                 </div>
-                
+        
                 <div class="form">
                     <form class="login-form" onSubmit={formik.handleSubmit}>
                     
@@ -124,8 +139,7 @@ const SignUp = () => {
                     <label > Profile Picture </label>
                     <input name="file" type="file" onChange={(e) => setProfilePhoto(e.target.files)}   />
                     
-                    <button type="submit">Submit</button>
-                    
+                    {Loading ? null : <button type="submit">Submit</button>}
                     
                     </form>
                     

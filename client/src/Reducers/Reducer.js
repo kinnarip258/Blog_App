@@ -1,6 +1,6 @@
 //========================== Import Modules Start ===========================
 
-import { SignIn_User, SignUp_User, SignUp_Toggle, User_Profile, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Updated_Article, Delete_Article, Get_Blogs, Like_Article, Comment_Article, Unlike_Article, Like_User } from "../Actions/actionTypes";
+import { SignIn_User, SignUp_User, SignUp_Toggle, User_Profile, Logout_User, Add_Article, Upload_ProfilePicture, Add_ArticleBanner, Updated_Article, Delete_Article, Get_Blogs, Like_Article, Comment_Article, Unlike_Article, Like_User, Loading } from "../Actions/actionTypes";
 
 //========================== Import Modules End =============================
 
@@ -12,6 +12,7 @@ const initialState = {
     Banner: [],
     Like: [],
     MyArticles:[],
+    Loading: false
 }
 
 const Reducer = (state = initialState, action) => {
@@ -20,14 +21,15 @@ const Reducer = (state = initialState, action) => {
 
             return{
                 ...state,
-                
+                  
             }
 
         case Upload_ProfilePicture:
 
             return{
                 ...state,
-                Toggle: true
+                Toggle: true,
+                Loading: false
             }
 
         case SignUp_Toggle: 
@@ -51,6 +53,7 @@ const Reducer = (state = initialState, action) => {
                 User: action.payload.LoginUser,
                 MyArticles: action.payload.MyArticles,
                 Toggle: false,
+                Loading: false
             }
         case Get_Blogs:
             
@@ -128,9 +131,13 @@ const Reducer = (state = initialState, action) => {
                 Blogs: [],
                 Banner: [],
                 Like: [],
-                Loader: false
             }
-           
+         
+        case Loading: 
+            return {
+                ...state,
+                Loading: true
+            }
         default: 
             return state
     }

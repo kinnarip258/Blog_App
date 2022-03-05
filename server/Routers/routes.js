@@ -134,6 +134,7 @@ router.get('/userProfile',authenticate, async (req,res) => {
 
         //============================= Get LoginUser =============================
         const LoginUser = req.authenticateUser;
+        //============================= Get LoginUser Articles =============================
         const MyArticles = await User.aggregate([aggregateQuery]);
         //============================= Send Login User =============================
         res.send({LoginUser, MyArticles});
@@ -147,53 +148,69 @@ router.get('/userProfile',authenticate, async (req,res) => {
 
 
 //============================= Get search Article =============================
-//authenticate,
-router.put('/getBlogs',  async (req,res) => {
+
+router.put('/getBlogs', authenticate, async (req,res) => {
     
     try{
-        
+    
         //============================= get Search User =============================
-        const {SearchValue} = req.body;
+        const {SearchValue, allTags} = req.body;
 
         let aggregateQuery = [];
 
-        if(SearchValue === ""){
+        if(SearchValue === "" && allTags.length === 0){
+
             aggregateQuery.push(
                 {
                     $unwind : "$Articles",
                 }, 
                 {
-                    $sort: { "Articles.createAt": -1}
+                    $sort: { "Articles.createAt" : -1}
                 }
             )
             const blogs = await User.aggregate([aggregateQuery]);
             
             res.send(blogs);
         }
-
-        else{
-            aggregateQuery.push(  
+        else {
+            aggregateQuery.push(
                 {
                     $unwind : "$Articles",
                 }, 
-                {
-                    $match: {
-                        $or: [
-                            {"Articles.title": new RegExp("^" + SearchValue, 'i')},
-                            {"Articles.category": new RegExp("^" + SearchValue, 'i')},
-                            {"Articles.tags": new RegExp(SearchValue, 'i')},
-                            {"username": new RegExp("^" + SearchValue, 'i')}
-                        ]   
-                    },
-                },
+            )
+            if(allTags.length > 0){
+                aggregateQuery.push(  
+                    {
+                        $match: {    
+                            "Articles.tags": {
+                                $in: allTags
+                            },  
+                        },
+                    },  
+                );
+            }
+            if(SearchValue !== ""){
+            
+                aggregateQuery.push(   
+                    {
+                        $match: {
+                            $or: [
+                                {"Articles.title": new RegExp("^" + SearchValue, 'i')},
+                                {"Articles.category": new RegExp("^" + SearchValue, 'i')},
+                                {"username": new RegExp("^" + SearchValue, 'i')}
+                            ]   
+                        },
+                    },     
+                );
+            }
+            aggregateQuery.push(
                 {
                     $sort: { "Articles.createAt": -1}
-                }   
-            );
-    
+                } 
+            )
             //============================= Apply AggreagteQuery In User Collection =============================
             const matchUser = await User.aggregate([aggregateQuery]);
-            
+                
             //============================= Send Response =============================
             res.send(matchUser); 
         }
@@ -209,14 +226,16 @@ router.put('/getBlogs',  async (req,res) => {
 router.post('/addArticle', authenticate, async (req,res) => {
     
     try{
-
-        const {title, description, category, tags} = req.body.values;
+        console.log("req.body", req.body);
+        const {title, description, category} = req.body.values;
         const banner = req.body.Banner;
+        const allTags = req.body.allTags;
+
         const article = {
             title: title, 
             description: description, 
             category: category, 
-            tags: tags,
+            tags: allTags,
             banner: banner
         }
 
@@ -254,47 +273,91 @@ router.post('/addArticleBanner', authenticate, upload.single('image'), async (re
 
 router.put('/updateArticle', authenticate, async (req,res) => {
     try{
-       
-        const {_id, title, description, category, tags, banner} = req.body.values;
+       console.log("req.body", req.body);
+        const {_id, title, description, category, banner} = req.body.values;
         const ArticleBanner = req.body.Banner;
+        const allTags = req.body.allTags;
         
         if(ArticleBanner.length === undefined){
-            console.log("if");
-            const article = {
-                _id: _id,
-                title: title, 
-                description: description, 
-                category: category, 
-                tags: tags,
-                banner: banner
-            }
             
-            //============================= Update Article Data =============================
-            await User.findOneAndUpdate(
-                { "Articles._id": req.query.ID }, {$set: {"Articles.$": article}}
-            );
-           
-            //============================= Send Response =============================
-            res.send({msg: "Profile Updated Sucessfully!" })
+            if(allTags.length === 0){
+                
+                const article = {
+                    _id: _id,
+                    title: title, 
+                    description: description, 
+                    category: category, 
+                    banner: ArticleBanner
+                }
+
+                //============================= Update Article Data =============================
+                await User.findOneAndUpdate(
+                    { "Articles._id": req.query.ID }, {$set: {"Articles.$": article}}
+                );
+            
+                //============================= Send Response =============================
+                res.send({msg: "Profile Updated Sucessfully!" })
+            }
+            else{
+                
+                const article = {
+                    _id: _id,
+                    title: title, 
+                    description: description, 
+                    category: category, 
+                    banner: ArticleBanner
+                }
+
+                //============================= Add Article =============================
+                await User.updateOne({"Articles._id": req.query.ID} , { $set: { "Articles.$.tags": allTags} } )
+        
+                //============================= Update Article Data =============================
+                await User.findOneAndUpdate(
+                    { "Articles._id": req.query.ID }, {$set: {"Articles.$": article}}
+                );
+                //============================= Send Response =============================
+                res.send({msg: "Profile Updated Sucessfully!" })
+            }
         }
         else{
-            console.log("else");
-            const article = {
-                _id: _id,
-                title: title, 
-                description: description, 
-                category: category, 
-                tags: tags,
-                banner: ArticleBanner
+            
+            if(allTags.length === 0){
+                const article = {
+                    _id: _id,
+                    title: title, 
+                    description: description, 
+                    category: category, 
+                    banner: banner
+                }
+
+                //============================= Update Article Data =============================
+                await User.findOneAndUpdate(
+                    { "Articles._id": req.query.ID }, {$set: {"Articles.$": article}}
+                );
+            
+                //============================= Send Response =============================
+                res.send({msg: "Profile Updated Sucessfully!" })
             }
+            else{
+                const article = {
+                    _id: _id,
+                    title: title, 
+                    description: description, 
+                    category: category, 
+                    banner: banner
+                }
+
+                //============================= Add Article =============================
+                await User.updateOne({"Articles._id": req.query.ID} , { $set: { "Articles.$.tags": allTags} } )
         
-            //============================= Update Article Data =============================
-            await User.findOneAndUpdate(
-                { "Articles._id": req.query.ID }, {$set: {"Articles.$": article}}
-            );
-           
-            //============================= Send Response =============================
-            res.send({msg: "Profile Updated Sucessfully!" })
+                //============================= Update Article Data =============================
+                await User.findOneAndUpdate(
+                    { "Articles._id": req.query.ID }, {$set: {"Articles.$": article}}
+                );
+            
+                //============================= Send Response =============================
+                res.send({msg: "Profile Updated Sucessfully!" })
+            }
         }  
     }
     catch(err){
@@ -396,12 +459,11 @@ router.get('/likeUser',authenticate, async (req,res) => {
 router.post('/commentArticle', authenticate, async (req,res) => {
     
     try{
-        const {userId,username, comment} = req.body;
+        const {userId, comment} = req.body;
         const articleId = req.query.ID;
        
         const user = {
             userId: userId,
-            username: username,
             comment: comment
         };
 

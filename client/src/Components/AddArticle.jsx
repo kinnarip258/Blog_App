@@ -6,8 +6,10 @@ import queryString from "query-string";
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import {useHistory} from "react-router-dom";
-import { addArticle, addArticleBanner, updateArticle } from "../Actions/actions";
-
+import LinearProgress from '@mui/material/LinearProgress';
+import Box from '@mui/material/Box';
+import { addArticle, addArticleBanner, loading, updateArticle } from "../Actions/actions";
+import Checkbox from "./Checkbox";
 //========================== Import Modules End =============================
 
 //============================= Add Article Component Start =============================
@@ -21,7 +23,7 @@ const AddArticle = () => {
   const Toggle = useSelector(state => state.Toggle);
   const Banner = useSelector(state => state.Banner);
   const User = useSelector(state => state.User);
-  
+  const Loading = useSelector(state => state.Loading);
   //============================= Get Edited User Id =============================
   const {id} = queryString.parse(window.location.search);
 
@@ -34,12 +36,23 @@ const AddArticle = () => {
   //============================= UseState =============================
   const [banner, setBanner] = useState('');
   const [article, setArticle] = useState('');
+  const [allTags, setAllTags] = useState([]);
+  
+  //============================= handle Tags =============================
+  
+  const handleClick = (e) => {
+    const { id, checked } = e.target;
+    setAllTags([...allTags, id]);
+    if (!checked) {
+      setAllTags(allTags.filter((item) => item !== id));
+    }
+  };
 
   //============================= UseFormik =============================
   const formik = useFormik({
     //============================= Initial Values =============================
     initialValues: {
-        title:"", description:"", category:"", tags:"",  
+        title:"", description:"", category:"",  
     },
     validationSchema: Yup.object().shape({
         title: Yup.string()
@@ -51,10 +64,6 @@ const AddArticle = () => {
           .max(300, 'Too Long!')
           .required('Required'),
         category: Yup.string().required('Required'),
-        tags: Yup.string()
-          .min(3, 'Too Short!')
-          .max(300, 'Too Long!')
-          .required('Required'),
       }),
 
       onSubmit: (values) => {
@@ -62,6 +71,7 @@ const AddArticle = () => {
         const formData = new FormData();
         formData.append('image', banner[0]);
         setArticle(values);
+        dispatch(loading());
         dispatch(addArticleBanner(formData))
       }
   });
@@ -69,11 +79,11 @@ const AddArticle = () => {
   //============================= Data Dispatch UseEffect =============================
   useEffect(() => {
     if(Banner.length !== 0 && !id){
-      dispatch(addArticle(article, Banner));
+      dispatch(addArticle(article, Banner, allTags));
       setArticle('')
     }
     else if (Banner.length !== 0 && id){
-      dispatch(updateArticle(id, article, Banner));
+      dispatch(updateArticle(id, article, Banner, allTags));
       setArticle('')
     }
   }, [Banner]);
@@ -91,7 +101,6 @@ const AddArticle = () => {
     if(id){
         //============================= get Edited User Data =============================
         const editUser = User.Articles.find((ele) => ele._id === id ? ele : null);
-        console.log("editUser",editUser);
         setEditedObject(editUser);
     }
   },[id]);
@@ -106,12 +115,22 @@ const AddArticle = () => {
 
   return (
     <>
+      <div className="Loading">
+        {
+          Loading ? (
+          <>
+            <Box sx={{ width: '100%' }}>
+              <LinearProgress />
+            </Box>
+          </>
+          ) : null
+        }
+    </div>
         <div class="login-page">
                 <div className="header_div">
-                    <h1>Add Article </h1>
+                    <h1>{id ? "Edit Article" : "Add Article"} </h1>
                 </div> 
 
-                
                 <div class="form">
                     <form class="login-form" onSubmit={formik.handleSubmit}>
                     <input {...formik.getFieldProps("title")} value={formik.values.title}  name="title"  type="text" placeholder="Title"/>
@@ -131,7 +150,19 @@ const AddArticle = () => {
                         <div className = "error">{formik.errors.category}</div>
                     ) : null}
 
-                    <input {...formik.getFieldProps("tags")} value={formik.values.tags}  name="tags"  type="text" placeholder="Tags"/>
+                    
+                    <div className="tags">
+                      <h2>tags {id ? <label>{editedObject.tags}</label> : null}</h2>
+                      
+                      <label>#birds</label><Checkbox type='checkbox' id={'#birds'} handleClick = {handleClick} isChecked={allTags.includes('#birds')}/> 
+                      <label>#nature</label><Checkbox type='checkbox' id={'#nature'} handleClick = {handleClick} isChecked={allTags.includes('#nature')}/>
+                      <label>#business</label><Checkbox type='checkbox' id={'#business'} handleClick = {handleClick} isChecked={allTags.includes('#business')}/>
+                      <label>#fashion</label><Checkbox type='checkbox' id={'#fashion'} handleClick = {handleClick} isChecked={allTags.includes('#fashion')}/>
+                      <label>#beautiful</label><Checkbox type='checkbox' id={'#beautiful'} handleClick = {handleClick} isChecked={allTags.includes('#beautiful')}/>
+                      <label>#southIndian</label><Checkbox type='checkbox' id={'#southIndian'} handleClick = {handleClick} isChecked={allTags.includes('#southIndian')}/>
+                      <label>#sweet</label><Checkbox type='checkbox' id={'#sweet'} handleClick = {handleClick} isChecked={allTags.includes('#sweet')}/>
+                      <label>#food</label><Checkbox type='checkbox' id={'#food'} handleClick = {handleClick} isChecked={allTags.includes('#food')}/>
+                    </div>
                     {formik.errors.tags && formik.touched.tags ? (
                         <div className = "error">{formik.errors.tags}</div>
                     ) : null}
@@ -147,7 +178,7 @@ const AddArticle = () => {
 
                     <input name="files" type="file" onChange={(e) => setBanner(e.target.files)}/>
                     
-                    <button type="submit">{!id ? "Submit" : "Update"}</button>
+                    {Loading ? null : <button type="submit">{!id ? "Submit" : "Update"}</button>}
                     
                     </form>
                 </div>

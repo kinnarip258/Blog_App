@@ -44,10 +44,12 @@ const userSchema = new mongoose.Schema({
                 type: String,
                 required: true
             },
-            tags: {
-                type: String,
-                required: true
-            },
+            tags: [
+                {
+                    type: String,
+                    required: true
+                }
+            ],
             description: {
                 type: String,
                 required: true
@@ -67,9 +69,6 @@ const userSchema = new mongoose.Schema({
             Comment: [
                 {
                     userId: {
-                        type: String
-                    },
-                    username:{
                         type: String
                     },
                     comment: {
